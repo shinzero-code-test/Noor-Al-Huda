@@ -1,0 +1,13 @@
+rules_version = '2';
+
+// Locked down until Stage 3 designs per-collection rules.
+// Firestore was created closed-by-default; this file keeps it that way.
+// Do NOT open reads/writes here without the Stage 3 authorization design
+// (server-authoritative Khatm invites, protected reporter data, tombstones).
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

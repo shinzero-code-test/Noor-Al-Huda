@@ -1,0 +1,13 @@
+node_modules/
+.wrangler/
+.dev.vars
+*.log
+.DS_Store
+# Local secrets. Never commit keystores, google-services.json,
+# service-account keys, or provider credentials.
+*.jks
+*.keystore
+google-services.json
+service-account*.json
+.env
+.env.local
