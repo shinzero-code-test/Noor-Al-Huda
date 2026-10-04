@@ -7,7 +7,9 @@ plugins {
 
 android {
     namespace = "com.exapps.nooralhuda"
-    compileSdk = 36
+    // 37: current Compose/Navigation/Lifecycle/hilt libraries require it.
+    // targetSdk stays 36 per Play policy.
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.exapps.nooralhuda"
