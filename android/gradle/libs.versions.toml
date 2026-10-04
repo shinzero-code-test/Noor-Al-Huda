@@ -1,11 +1,13 @@
 # Pinned 2026-10-05 from official sources:
-# AGP 9.4.0 (Gradle 9.6.0, JDK 17), Kotlin 2.4.20, KSP 2.3.10,
+# AGP 9.4.0 (Gradle 9.6.0, JDK 17) + bundled KGP 2.2.10, KSP 2.3.10,
 # Compose BOM 2026.09.00, Room 2.8.5, Navigation 2.10.1, Lifecycle 2.11.0,
 # Hilt 2.60.1, androidx.hilt 1.4.0, DataStore 1.2.1,
 # coroutines-test 1.11.0, Turbine 1.2.1.
+# KGP stays on AGP's bundled 2.2.10 until a KGP with AGP-9 new-DSL support
+# ships (2.5.x) — then drop android.newDsl=false.
 [versions]
 agp = "9.4.0"
-kotlin = "2.4.20"
+kotlin = "2.2.10"
 ksp = "2.3.10"
 composeBom = "2026.09.00"
 room = "2.8.5"
