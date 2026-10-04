@@ -8,6 +8,8 @@ FIREBASE_PROJECT_ID = "nooralhuda-2026"
 QF_ENV = "production"
 # Set to "true" only after direct-APK App Check compatibility is validated on device.
 REQUIRE_APP_CHECK = "false"
+# Max proxied AI calls per user per UTC day (audit counter in Firestore).
+AI_DAILY_LIMIT = "50"
 
 # Secrets (set via `wrangler secret put`, never in this file):
 #   QF_CLIENT_ID, QF_CLIENT_SECRET

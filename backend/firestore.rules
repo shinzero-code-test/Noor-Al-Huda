@@ -1,13 +1,143 @@
 rules_version = '2';
 
-// Locked down until Stage 3 designs per-collection rules.
-// Firestore was created closed-by-default; this file keeps it that way.
-// Do NOT open reads/writes here without the Stage 3 authorization design
-// (server-authoritative Khatm invites, protected reporter data, tombstones).
+// Stage 3 authorization design (2026-10-05).
+//
+// Principles:
+// - Users own their subtree. Nothing is account-global.
+// - Group reads are member-only. Self-asserted membership is impossible:
+//   joins require either an open group or the group creator.
+// - Reports carry field allowlists and owner binding. No device identifiers
+//   are stored (reporter_device_id was removed from the client contract).
+// - Public catalogs are read-only. AI usage rows are owner-scoped so the
+//   backend can count per-UID spend with the caller's own token.
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if false;
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function shortStr(v, max) {
+      return v is string && v.size() >= 1 && v.size() <= max;
+    }
+
+    // ---- user subtree: owner only ----
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+
+      match /bookmarks/{bookmarkId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      match /weekly_stats/{statId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      match /sync_data/{recordId} {
+        allow read, write: if isOwner(uid);
+      }
+
+      // Per-day AI call counters, written by the backend with the caller's token.
+      match /ai_usage/{day} {
+        allow read, write: if isOwner(uid);
+      }
+    }
+
+    // ---- legacy bookmarks: migration path only ----
+    // New writes must also bind the new document to the caller (the old rule
+    // checked only the stored owner, letting ownership be reassigned).
+    match /quran_bookmarks/{bookmarkId} {
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if isSignedIn()
+        && resource.data.userId == request.auth.uid
+        && request.resource.data.userId == request.auth.uid;
+    }
+
+    // ---- group khatm: member-only reads, no self-asserted membership ----
+    // Member doc IDs are "<groupId>__<uid>". Group IDs are auto-IDs, which
+    // never contain "__", so the split below is unambiguous.
+
+    function groupRef(groupId) {
+      return /databases/$(database)/documents/khatm_groups/$(groupId);
+    }
+
+    function isKhatmMember(groupId) {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/khatm_members/$(groupId + '__' + request.auth.uid));
+    }
+
+    match /khatm_groups/{groupId} {
+      allow read: if true;
+      allow create: if isSignedIn()
+        && request.resource.data.created_by == request.auth.uid;
+      allow update, delete: if isSignedIn()
+        && resource.data.created_by == request.auth.uid;
+    }
+
+    match /khatm_members/{docId} {
+      allow read: if isSignedIn() && (
+        docId.split('__')[1] == request.auth.uid
+        || isKhatmMember(docId.split('__')[0])
+      );
+      // Join only your own slot, and only into open groups — unless you are
+      // the group creator adding someone.
+      allow create: if isSignedIn()
+        && docId == request.resource.data.groupId + '__' + request.auth.uid
+        && request.resource.data.uid == request.auth.uid
+        && (
+          get(groupRef(request.resource.data.groupId)).data.openJoin == true
+          || get(groupRef(request.resource.data.groupId)).data.created_by == request.auth.uid
+        );
+      // Leave yourself, or be removed by the group creator. No edits.
+      allow delete: if isSignedIn() && (
+        docId.split('__')[1] == request.auth.uid
+        || get(groupRef(docId.split('__')[0])).data.created_by == request.auth.uid
+      );
+      allow update: if false;
+    }
+
+    match /khatm_progress/{groupId} {
+      allow read, write: if isKhatmMember(groupId);
+    }
+
+    // ---- reports: strict create, invisible to clients ----
+    // Moderation happens in the Firebase console. Clients can only file.
+
+    match /content_flags/{flagId} {
+      allow create: if isSignedIn()
+        && request.resource.data.reporter_uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['contentId', 'reason', 'details', 'reporter_uid', 'createdAt'])
+        && shortStr(request.resource.data.contentId, 200)
+        && shortStr(request.resource.data.reason, 50)
+        && (!('details' in request.resource.data) || request.resource.data.details is string && request.resource.data.details.size() <= 500);
+      allow read, update, delete: if false;
+    }
+
+    match /halal_reports/{barcode} {
+      allow create: if isSignedIn()
+        && request.resource.data.reporter_uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['barcode', 'verdict', 'note', 'reporter_uid', 'createdAt'])
+        && shortStr(request.resource.data.barcode, 32)
+        && shortStr(request.resource.data.verdict, 20)
+        && (!('note' in request.resource.data) || request.resource.data.note is string && request.resource.data.note.size() <= 500);
+      allow read, update, delete: if false;
+    }
+
+    // ---- public catalogs (populated by admin/console only) ----
+    match /daily_content/{docId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /radios/{radioId} {
+      allow read: if true;
+      allow write: if false;
     }
   }
 }

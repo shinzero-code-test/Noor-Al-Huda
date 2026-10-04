@@ -3,7 +3,12 @@ import { cors } from 'hono/cors';
 
 import { verifyFirebaseIdToken, type VerifiedUser } from './auth';
 import { qfBase, qfGet } from './qf';
-import { checkAiBudget, forwardAiChat } from './ai';
+import {
+  checkAiBudget,
+  checkDailyBudget,
+  forwardAiChat,
+  incrementTodayUsage,
+} from './ai';
 
 export interface Env {
   FIREBASE_PROJECT_ID: string;
@@ -14,6 +19,7 @@ export interface Env {
   AI_BASE_URL?: string;
   AI_API_KEY?: string;
   AI_CHAT_MODEL?: string;
+  AI_DAILY_LIMIT?: string;
 }
 
 const app = new Hono<{ Bindings: Env }>();
@@ -26,13 +32,15 @@ app.get('/api/health', (c) =>
 async function requireUser(c: {
   req: { header(name: string): string | undefined };
   env: Env;
-}): Promise<VerifiedUser> {
+}): Promise<{ user: VerifiedUser; idToken: string }> {
   const header = c.req.header('authorization');
   if (!header?.startsWith('Bearer ')) {
     throw Object.assign(new Error('Missing Bearer token'), { status: 401 });
   }
+  const idToken = header.slice(7);
   try {
-    return await verifyFirebaseIdToken(header.slice(7), c.env.FIREBASE_PROJECT_ID);
+    const user = await verifyFirebaseIdToken(idToken, c.env.FIREBASE_PROJECT_ID);
+    return { user, idToken };
   } catch {
     throw Object.assign(new Error('Invalid Firebase token'), { status: 401 });
   }
@@ -66,7 +74,7 @@ function matchQuranRoute(path: string): string[] | null {
 }
 
 app.get('/api/quran/*', async (c) => {
-  const user = await requireUser(c);
+  const { user } = await requireUser(c);
   void user;
   const qfPath = c.req.path.replace(/^\/api\/quran/, '') || '/';
   const fullPath = `/content/api/v4${qfPath === '/' ? '/chapters' : qfPath}`;
@@ -104,7 +112,7 @@ app.get('/api/quran/*', async (c) => {
 });
 
 app.post('/api/ai/ask', async (c) => {
-  const user = await requireUser(c);
+  const { user, idToken } = await requireUser(c);
   let body: unknown;
   try {
     body = await c.req.json();
@@ -122,8 +130,18 @@ app.post('/api/ai/ask', async (c) => {
   if (!budget.allowed) {
     return c.json({ error: 'Rate limit exceeded', retryAfterSec: budget.retryAfterSec }, 429);
   }
+  const dailyLimit = Number(c.env.AI_DAILY_LIMIT ?? '50');
+  try {
+    const daily = await checkDailyBudget(user.uid, idToken, c.env.FIREBASE_PROJECT_ID, dailyLimit);
+    if (!daily.allowed) {
+      return c.json({ error: 'Daily AI budget exhausted', retryAfterSec: daily.retryAfterSec }, 429);
+    }
+  } catch {
+    return c.json({ error: 'Budget check unavailable' }, 502);
+  }
   try {
     const answer = await forwardAiChat(c.env, input.prompt.trim());
+    void incrementTodayUsage(user.uid, idToken, c.env.FIREBASE_PROJECT_ID);
     return c.json({ answer });
   } catch (err) {
     if (err instanceof Error && err.message === 'AI_PROVIDER_NOT_CONFIGURED') {
