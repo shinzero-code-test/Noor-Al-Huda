@@ -11,3 +11,10 @@ google-services.json
 service-account*.json
 .env
 .env.local
+# Android local build state (all builds run in CI).
+local.properties
+.gradle/
+build/
+app/build/
+captures/
+.externalNativeBuild/

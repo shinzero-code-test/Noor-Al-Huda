@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">نور الهدى</string>
+    <string name="tab_home">الرئيسية</string>
+    <string name="tab_quran">القرآن</string>
+    <string name="tab_prayer">الصلاة</string>
+    <string name="tab_azkar">الأذكار</string>
+    <string name="tab_radio">الإذاعة</string>
+    <string name="tab_settings">الإعدادات</string>
+    <string name="home_greeting_morning">صباح الخير</string>
+    <string name="home_greeting_afternoon">مساء الخير</string>
+    <string name="home_greeting_evening">مساء الخير</string>
+    <string name="home_title">الرئيسية</string>
+    <string name="quran_title">القرآن الكريم</string>
+    <string name="prayer_title">مواقيت الصلاة</string>
+    <string name="azkar_title">الأذكار</string>
+    <string name="radio_title">الإذاعة</string>
+    <string name="settings_title">الإعدادات</string>
+    <string name="coming_in_slice">يصل المحتوى الكامل في مرحلة البناء الخاصة به</string>
+    <string name="action_retry">إعادة المحاولة</string>
+</resources>
