@@ -4,7 +4,7 @@
 # Hilt 2.60.1, androidx.hilt 1.4.0, DataStore 1.2.1,
 # coroutines-test 1.11.0, Turbine 1.2.1.
 [versions]
-agp = "9.4.0"
+agp = "8.13"
 kotlin = "2.4.20"
 ksp = "2.3.10"
 composeBom = "2026.09.00"
@@ -42,6 +42,7 @@ turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

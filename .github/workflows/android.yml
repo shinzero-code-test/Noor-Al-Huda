@@ -29,7 +29,7 @@ jobs:
           yes | sdkmanager --licenses > /dev/null
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: 9.6.0
+          gradle-version: 8.13
       - name: Assemble debug
         run: gradle :app:assembleDebug --stacktrace
       - name: Unit tests
