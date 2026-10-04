@@ -20,7 +20,7 @@ class HomeViewModel @Inject constructor(
     hijriDates: HijriDateProvider
 ) : ViewModel() {
 
-    private val hour = Calendar.getInstance().get(Locale.getDefault()).get(Calendar.HOUR_OF_DAY)
+    private val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
 
     private val _uiState = MutableStateFlow(
         HomeUiState(
