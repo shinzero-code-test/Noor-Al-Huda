@@ -42,7 +42,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       - name: Verify release signature
         run: |
-          EXPECTED="BC:12:1A:ED:59:EF:78:5D:3C:63:3C:66:8D:49:17:D7:94:55:6B:54:1E:0D:4D:97:3B:8A:93:6B:25:1F:F5:22"
+          EXPECTED="ED:67:AD:61:18:36:80:52:85:34:C2:B2:35:0A:5A:BF:B9:BB:E9:5F:6B:98:35:C6:9D:61:3B:1E:76:B3:45:48"
           APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
           for apk in app/build/outputs/apk/release/*-release.apk; do
             CERT=$("$APKSIGNER" verify --print-certs "$apk" | grep -m1 "SHA-256" | awk '{print $NF}')
