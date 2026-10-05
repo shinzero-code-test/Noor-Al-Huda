@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
@@ -41,6 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import java.util.Date
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -277,8 +279,7 @@ private fun PrayerRow(
                     color = if (isNext) colors.primary else colors.onSurface
                 )
                 Text(
-                    text = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
-                        .format(time.at),
+                    text = rememberTime(time.at.time),
                     style = MaterialTheme.typography.bodyMedium.copy(fontFeatureSettings = "tnum"),
                     color = colors.onSurfaceVariant
                 )
@@ -346,8 +347,15 @@ private fun QadaStrip(
     }
 }
 
-fun prayerNameRes(name: PrayerName): Int = when (name) {
-    PrayerName.FAJR -> R.string.prayer_fajr
+@Composable
+private fun rememberTime(at: Long): String {
+    val context = LocalContext.current
+    return androidx.compose.runtime.remember(at) {
+        android.text.format.DateFormat.getTimeFormat(context).format(Date(at))
+    }
+}
+
+fun prayerNameRes(name: PrayerName): Int = when (name) {    PrayerName.FAJR -> R.string.prayer_fajr
     PrayerName.SUNRISE -> R.string.prayer_sunrise
     PrayerName.DHUHR -> R.string.prayer_dhuhr
     PrayerName.ASR -> R.string.prayer_asr
