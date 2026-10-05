@@ -2,6 +2,7 @@ package com.exapps.nooralhuda.core.di
 
 import android.content.Context
 import androidx.room.Room
+import com.exapps.nooralhuda.core.data.db.MIGRATION_1_2
 import com.exapps.nooralhuda.core.data.db.NoorDatabase
 import com.exapps.nooralhuda.core.datetime.HijriDateProvider
 import com.exapps.nooralhuda.core.datetime.IslamicHijriDateProvider
@@ -30,7 +31,9 @@ object AppModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): NoorDatabase =
-        Room.databaseBuilder(context, NoorDatabase::class.java, "noor.db").build()
+        Room.databaseBuilder(context, NoorDatabase::class.java, "noor.db")
+            .addMigrations(MIGRATION_1_2)
+            .build()
 
     @Provides
     fun provideBookmarkDao(db: NoorDatabase) = db.bookmarkDao()

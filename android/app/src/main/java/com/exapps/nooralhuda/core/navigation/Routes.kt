@@ -26,3 +26,6 @@ data class SurahDetail(val surahId: Int)
 
 @Serializable
 data class HadithDetail(val hadithId: String)
+
+@Serializable
+data object Auth

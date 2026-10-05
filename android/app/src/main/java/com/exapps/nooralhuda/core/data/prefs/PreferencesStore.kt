@@ -4,10 +4,12 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,7 +18,8 @@ private val Context.noorDataStore: DataStore<Preferences> by preferencesDataStor
 
 /** Small preferences only. Lists and content live in Room. */
 @Singleton
-class PreferencesStore @Inject constructor(@ApplicationContext private val context: Context) {
+class PreferencesStore @Inject constructor(@ApplicationContext private val context: Context) :
+    PendingEmailStore {
 
     object Keys {
         val PRIVACY_MODE = stringPreferencesKey("privacy_mode")
@@ -25,6 +28,8 @@ class PreferencesStore @Inject constructor(@ApplicationContext private val conte
         /** Passwordless email-link address. Not a secret — plain DataStore by design. */
         val PENDING_EMAIL_LINK = stringPreferencesKey("pending_email_link")
     }
+
+    fun lastSyncKey(bucket: String) = "sync:last:$bucket"
 
     val privacyMode: Flow<String?> = context.noorDataStore.data.map { it[Keys.PRIVACY_MODE] }
     val localeTag: Flow<String?> = context.noorDataStore.data.map { it[Keys.LOCALE_TAG] }
@@ -39,5 +44,24 @@ class PreferencesStore @Inject constructor(@ApplicationContext private val conte
 
     suspend fun setLastReadSurah(surahId: Int) {
         context.noorDataStore.edit { it[Keys.LAST_READ_SURAH] = surahId.toString() }
+    }
+
+    suspend fun setLastSync(bucket: String, at: Long) {
+        context.noorDataStore.edit { it[longPreferencesKey(lastSyncKey(bucket))] = at }
+    }
+
+    suspend fun lastSync(bucket: String): Long? {
+        return context.noorDataStore.data.map { it[longPreferencesKey(lastSyncKey(bucket))] }.first()
+    }
+
+    override suspend fun setPendingEmail(email: String?) {
+        context.noorDataStore.edit {
+            if (email == null) it.remove(Keys.PENDING_EMAIL_LINK)
+            else it[Keys.PENDING_EMAIL_LINK] = email
+        }
+    }
+
+    override suspend fun pendingEmail(): String? {
+        return context.noorDataStore.data.map { it[Keys.PENDING_EMAIL_LINK] }.first()
     }
 }

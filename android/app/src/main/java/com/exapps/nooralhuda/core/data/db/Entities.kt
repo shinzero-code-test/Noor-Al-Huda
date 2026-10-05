@@ -22,7 +22,9 @@ data class BookmarkEntity(
     val surahId: Int,
     val ayahNumber: Int,
     val surahName: String,
-    val createdAt: Long
+    val createdAt: Long,
+    /** Tombstone. Local deletes win; purged after a successful push. */
+    val deleted: Boolean = false
 ) {
     companion object {
         fun keyOf(surahId: Int, ayahNumber: Int): String = "$surahId:$ayahNumber"
@@ -51,6 +53,9 @@ interface BookmarkDao {
 
     @Query("DELETE FROM bookmarks WHERE `key` = :key")
     suspend fun delete(key: String)
+
+    @Query("DELETE FROM bookmarks WHERE deleted = 1")
+    suspend fun clearDeleted()
 
     @Query("DELETE FROM bookmarks")
     suspend fun clear()

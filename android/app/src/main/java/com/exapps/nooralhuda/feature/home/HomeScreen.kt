@@ -3,6 +3,7 @@ package com.exapps.nooralhuda.feature.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,11 +16,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.exapps.nooralhuda.R
 import com.exapps.nooralhuda.core.ui.components.NoorCard
+import com.exapps.nooralhuda.core.ui.components.NoorGhostButton
 
-/** A1: real greeting + Hijri date. Prayer/verse/hadith cards land in A3–A5. */
+/** A1: real greeting + Hijri date + sign-in entry. Prayer/verse/hadith cards land in A3–A5. */
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(
+    onSignInClick: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val signedIn by viewModel.signedIn.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -44,6 +50,13 @@ fun HomeScreen(viewModel: HomeViewModel = hiltViewModel()) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+        }
+        if (!signedIn) {
+            NoorGhostButton(
+                onClick = onSignInClick,
+                label = stringResource(R.string.home_sign_in),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }

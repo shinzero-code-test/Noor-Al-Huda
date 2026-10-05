@@ -41,3 +41,31 @@ jobs:
         with:
           name: debug-apk
           path: android/app/build/outputs/apk/debug/*.apk
+
+  emulator:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - name: Install SDK packages
+        run: |
+          sdkmanager --install "platforms;android-36" "build-tools;36.0.0" "platform-tools" "system-images;android-29;google_apis;x86_64" "emulator"
+          yes | sdkmanager --licenses > /dev/null
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 9.6.0
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          target: google_apis
+          arch: x86_64
+          script: gradle :app:connectedCheck --stacktrace

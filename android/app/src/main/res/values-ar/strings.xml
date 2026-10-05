@@ -18,4 +18,27 @@
     <string name="settings_title">الإعدادات</string>
     <string name="coming_in_slice">يصل المحتوى الكامل في مرحلة البناء الخاصة به</string>
     <string name="action_retry">إعادة المحاولة</string>
+    <string name="home_sign_in">تسجيل الدخول</string>
+    <string name="auth_title">الحساب</string>
+    <string name="auth_email">البريد الإلكتروني</string>
+    <string name="auth_password">كلمة المرور</string>
+    <string name="auth_sign_in">تسجيل الدخول</string>
+    <string name="auth_register">إنشاء حساب</string>
+    <string name="auth_go_register">جديد هنا؟ أنشئ حساباً</string>
+    <string name="auth_go_sign_in">لديك حساب؟ سجّل الدخول</string>
+    <string name="auth_guest">المتابعة كضيف</string>
+    <string name="auth_send_link">أرسل لي رابط تسجيل الدخول</string>
+    <string name="auth_forgot">نسيت كلمة المرور؟</string>
+    <string name="auth_reset_sent">تم إرسال بريد إعادة التعيين</string>
+    <string name="auth_link_sent">تم إرسال الرابط — افتحه على هذا الجهاز</string>
+    <string name="auth_link_needs_email">أدخل نفس البريد المستخدم للرابط</string>
+    <string name="auth_error_invalid">البريد أو كلمة المرور غير صحيحة</string>
+    <string name="auth_error_in_use">هذا البريد مسجّل بالفعل</string>
+    <string name="auth_error_weak">كلمة المرور ضعيفة جداً</string>
+    <string name="auth_error_not_found">لا يوجد حساب بهذا البريد</string>
+    <string name="auth_error_network">خطأ في الشبكة — تحقق من الاتصال</string>
+    <string name="auth_error_rate_limited">محاولات كثيرة — حاول لاحقاً</string>
+    <string name="auth_error_link_expired">انتهت صلاحية الرابط</string>
+    <string name="auth_error_recent_login">سجّل الدخول مجدداً للمتابعة</string>
+    <string name="auth_error_unknown">حدث خطأ ما</string>
 </resources>

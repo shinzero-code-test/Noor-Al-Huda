@@ -29,6 +29,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.exapps.nooralhuda.R
+import com.exapps.nooralhuda.feature.auth.ui.AuthScreen
 import com.exapps.nooralhuda.feature.azkar.AzkarScreen
 import com.exapps.nooralhuda.feature.hadith.HadithDetailScreen
 import com.exapps.nooralhuda.feature.home.HomeScreen
@@ -60,7 +61,7 @@ fun NoorAppNav() {
             startDestination = Home,
             modifier = Modifier.padding(padding)
         ) {
-            composable<Home> { HomeScreen() }
+            composable<Home> { HomeScreen(onSignInClick = { navController.navigate(Auth) }) }
             composable<Quran> { QuranScreen(onSurahClick = { navController.navigate(SurahDetail(it)) }) }
             composable<Prayer> { PrayerScreen() }
             composable<Azkar> { AzkarScreen() }
@@ -71,6 +72,13 @@ fun NoorAppNav() {
             }
             composable<HadithDetail> { backStackEntry ->
                 HadithDetailScreen(hadithId = backStackEntry.toRoute<HadithDetail>().hadithId)
+            }
+            composable<Auth> {
+                AuthScreen(onSignedIn = {
+                    navController.navigate(Home) {
+                        popUpTo(navController.graph.findStartDestination().id)
+                    }
+                })
             }
         }
     }
