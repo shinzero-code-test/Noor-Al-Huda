@@ -61,7 +61,7 @@ android {
     androidComponents {
         onVariants(selector().withBuildType("release")) { variant ->
             variant.outputs.forEach { output ->
-                val filter = output.filters.find { it.filterType == "ABI" }?.identifier
+                val filter = output.filters.find { it.filterType.name == "ABI" }?.identifier
                 if (filter != null && filter.isNotBlank()) {
                     val code = abiCodes[filter] ?: 0
                     output.versionCode.set((output.versionCode.getOrElse(10000)) * 10 + code)
