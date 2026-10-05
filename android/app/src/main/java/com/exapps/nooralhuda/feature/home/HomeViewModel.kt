@@ -50,18 +50,15 @@ class HomeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             quran.refreshSurahs()
-            updateResume()
         }
         viewModelScope.launch {
-            quran.surahs.collect { updateResume() }
+            quran.surahs.collect { surahs ->
+                val lastId = prefs.lastReadSurahId() ?: return@collect
+                base.value = base.value.copy(
+                    resumeSurah = surahs.firstOrNull { it.id == lastId }
+                )
+            }
         }
-    }
-
-    private suspend fun updateResume() {
-        val lastId = prefs.lastReadSurahId() ?: return
-        base.value = base.value.copy(
-            resumeSurah = quran.surahs.value.firstOrNull { it.id == lastId }
-        )
     }
 
     fun setLastRead(surahId: Int) {
