@@ -57,11 +57,12 @@ jobs:
       - name: Verify release signature
         run: |
           EXPECTED="62:D3:90:BD:C1:D7:C5:09:14:CD:B3:CE:F8:46:FD:AE:DE:94:29:45:7C:48:26:9B:B6:C1:75:D7:02:C4:A6:18"
+          NORM_EXPECTED=$(echo "$EXPECTED" | tr -d ':' | tr 'A-Z' 'a-z')
           APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
           for apk in app/build/outputs/apk/release/*-release.apk; do
-            CERT=$("$APKSIGNER" verify --print-certs "$apk" | grep -m1 "SHA-256" | awk '{print $NF}')
+            CERT=$("$APKSIGNER" verify --print-certs "$apk" | grep -m1 "SHA-256" | awk '{print $NF}' | tr 'A-Z' 'a-z')
             echo "$apk -> $CERT"
-            [ "$CERT" = "$EXPECTED" ] || { echo "SIGNATURE MISMATCH"; exit 1; }
+            [ "$CERT" = "$NORM_EXPECTED" ] || { echo "SIGNATURE MISMATCH"; exit 1; }
           done
       - name: Tag and publish GitHub Release
         env:
