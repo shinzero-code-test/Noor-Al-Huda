@@ -42,7 +42,7 @@ class PreferencesStore @Inject constructor(@ApplicationContext private val conte
         context.noorDataStore.edit { it[Keys.LOCALE_TAG] = tag }
     }
 
-    suspend fun setLastReadSurah(surahId: Int) {
+    override suspend fun setLastReadSurah(surahId: Int) {
         context.noorDataStore.edit { it[Keys.LAST_READ_SURAH] = surahId.toString() }
     }
 

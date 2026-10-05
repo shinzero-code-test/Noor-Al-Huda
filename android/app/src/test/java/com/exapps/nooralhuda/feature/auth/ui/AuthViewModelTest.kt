@@ -18,6 +18,8 @@ class FakePendingEmail : PendingEmailStore {
         this.email = email
     }
     override suspend fun pendingEmail(): String? = email
+    override suspend fun setLastReadSurah(surahId: Int) {
+    }
 }
 
 class AuthViewModelTest {

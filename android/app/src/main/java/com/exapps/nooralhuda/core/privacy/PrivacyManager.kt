@@ -31,6 +31,7 @@ class PrivacyManager @Inject constructor(
     suspend fun canUseAi(): Boolean = modeFlow.first() != PrivacyModes.PRIVATE
     suspend fun canUseRemoteSearch(): Boolean = modeFlow.first() != PrivacyModes.PRIVATE
     suspend fun canUseServerStt(): Boolean = modeFlow.first() != PrivacyModes.PRIVATE
+    suspend fun canFetchRemote(): Boolean = modeFlow.first() != PrivacyModes.PRIVATE
 
     /** Allowlist mirror of the legacy canRequestUrl for the future Retrofit layer. */
     fun canRequestUrl(url: String): Boolean {

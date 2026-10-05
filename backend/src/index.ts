@@ -58,6 +58,8 @@ const QURAN_ROUTES: Array<{ prefix: string; params: string[] }> = [
   { prefix: '/content/api/v4/chapters', params: [] },
   { prefix: '/content/api/v4/verses/by_chapter/', params: ['translations', 'words', 'per_page', 'page', 'fields'] },
   { prefix: '/content/api/v4/verses/by_key/', params: ['translations', 'words', 'fields'] },
+  // Read-only metadata: translation resource IDs, reciters, tafsirs.
+  { prefix: '/content/api/v4/resources/', params: ['language', 'per_page', 'page'] },
 ];
 
 function matchQuranRoute(path: string): string[] | null {
@@ -69,6 +71,9 @@ function matchQuranRoute(path: string): string[] | null {
   }
   if (path.startsWith('/content/api/v4/verses/by_key/')) {
     return QURAN_ROUTES[2]!.params;
+  }
+  if (path.startsWith('/content/api/v4/resources/')) {
+    return QURAN_ROUTES[3]!.params;
   }
   return null;
 }

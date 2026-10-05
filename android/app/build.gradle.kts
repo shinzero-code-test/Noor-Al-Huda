@@ -73,6 +73,10 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.kotlinx.coroutines.guava)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.session)
+    implementation(libs.okhttp)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)
 

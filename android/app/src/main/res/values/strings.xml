@@ -42,4 +42,10 @@
     <string name="auth_error_link_expired">That link has expired</string>
     <string name="auth_error_recent_login">Please sign in again to continue</string>
     <string name="auth_error_unknown">Something went wrong</string>
+    <string name="quran_search">Search surah, verse or section</string>
+    <string name="quran_resume">Resume reading</string>
+    <string name="reader_translation">Translation</string>
+    <string name="reader_tajweed">Tajweed</string>
+    <string name="reader_play">Play recitation</string>
+    <string name="reader_audio_label">Surah %1$d recitation</string>
 </resources>

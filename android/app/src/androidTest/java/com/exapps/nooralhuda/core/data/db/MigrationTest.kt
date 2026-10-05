@@ -32,6 +32,22 @@ class MigrationTest {
         assertEquals(true, columns.contains("deleted"))
     }
 
+    @Test
+    fun migrate2To3_createsQuranTables() {
+        helper.createDatabase(TEST_DB, 2).close()
+        val db = helper.runMigrationsAndValidate(TEST_DB, 3, true, MIGRATION_2_3)
+        val cursor = db.query(
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('surahs', 'verses', 'reciter_downloads')"
+        )
+        val tables = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            tables.add(cursor.getString(0))
+        }
+        cursor.close()
+        db.close()
+        assertEquals(setOf("surahs", "verses", "reciter_downloads"), tables.toSet())
+    }
+
     companion object {
         private const val TEST_DB = "migration-test"
     }

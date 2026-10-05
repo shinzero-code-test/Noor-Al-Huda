@@ -41,4 +41,10 @@
     <string name="auth_error_link_expired">انتهت صلاحية الرابط</string>
     <string name="auth_error_recent_login">سجّل الدخول مجدداً للمتابعة</string>
     <string name="auth_error_unknown">حدث خطأ ما</string>
+    <string name="quran_search">ابحث عن سورة أو آية أو جزء</string>
+    <string name="quran_resume">متابعة القراءة</string>
+    <string name="reader_translation">الترجمة</string>
+    <string name="reader_tajweed">التجويد</string>
+    <string name="reader_play">تشغيل التلاوة</string>
+    <string name="reader_audio_label">تلاوة سورة %1$d</string>
 </resources>
