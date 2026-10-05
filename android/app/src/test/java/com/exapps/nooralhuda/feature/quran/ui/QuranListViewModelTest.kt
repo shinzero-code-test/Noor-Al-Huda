@@ -35,6 +35,7 @@ class FakePendingEmailStore : PendingEmailStore {
     override suspend fun setLastReadSurah(surahId: Int) {
         lastRead = surahId
     }
+    override suspend fun lastReadSurahId(): Int? = lastRead
 }
 
 class QuranListViewModelTest {
