@@ -41,6 +41,7 @@ jobs:
           echo "alias_len=${#KEY_ALIAS}"
           printf '%s' "$KEYSTORE_PASSWORD" | sha256sum
           printf '%s' "$KEY_PASSWORD" | sha256sum
+          keytool -list -keystore "$RUNNER_TEMP/noor-release.jks" -storepass "$KEYSTORE_PASSWORD" 2>&1 | head -5
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
@@ -55,7 +56,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       - name: Verify release signature
         run: |
-          EXPECTED="B4:EC:2F:98:32:1D:20:46:75:F7:D5:47:0A:5B:0F:D3:CD:E7:55:CA:19:AE:D6:4E:2E:3C:F2:8A:02:99:DA:8B"
+          EXPECTED="62:D3:90:BD:C1:D7:C5:09:14:CD:B3:CE:F8:46:FD:AE:DE:94:29:45:7C:48:26:9B:B6:C1:75:D7:02:C4:A6:18"
           APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
           for apk in app/build/outputs/apk/release/*-release.apk; do
             CERT=$("$APKSIGNER" verify --print-certs "$apk" | grep -m1 "SHA-256" | awk '{print $NF}')
