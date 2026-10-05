@@ -63,7 +63,7 @@ class AzkarRepository @Inject constructor(
             val text = (obj["ARABIC_TEXT"] as? kotlinx.serialization.json.JsonPrimitive)
                 ?.takeIf { it.isString }?.content ?: return@mapNotNull null
             val count = (obj["REPEAT"] as? kotlinx.serialization.json.JsonPrimitive)
-                ?.intOrNull ?: 1
+                ?.content?.toIntOrNull() ?: 1
             AzkarEntry(id, text, count, virtue)
         }.take(40)
     }

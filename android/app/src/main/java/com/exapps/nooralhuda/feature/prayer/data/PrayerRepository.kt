@@ -47,8 +47,8 @@ class PrayerRepository @Inject constructor(
     fun compute(location: DeviceLocation, method: CalculationMethod, date: Date): PrayerDay {
         val coordinates = Coordinates(location.lat, location.lng)
         val params = when (method) {
-            CalculationMethod.UMM_AL_QURA -> AdhanMethod.UMM_AL_QURA_CALCULATION_METHOD.parameters
-            CalculationMethod.EGYPTIAN -> AdhanMethod.EGYPTIAN_GENERAL_AUTHORITY.parameters
+            CalculationMethod.UMM_AL_QURA -> AdhanMethod.UMM_AL_QURA.parameters
+            CalculationMethod.EGYPTIAN -> AdhanMethod.EGYPTIAN.parameters
             CalculationMethod.KARACHI -> AdhanMethod.KARACHI.parameters
         }
         val cal = Calendar.getInstance(TimeZone.getDefault()).apply { time = date }
@@ -69,7 +69,7 @@ class PrayerRepository @Inject constructor(
         return PrayerDay(
             dateKey = dateKey(date),
             times = list,
-            qiblaDegrees = Qibla.qibla(coordinates),
+            qiblaDegrees = Qibla(coordinates).direction,
             locationLabel = location.label,
             method = method
         )
