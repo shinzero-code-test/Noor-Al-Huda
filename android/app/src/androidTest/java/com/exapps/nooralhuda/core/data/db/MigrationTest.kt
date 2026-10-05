@@ -48,6 +48,22 @@ class MigrationTest {
         assertEquals(setOf("surahs", "verses", "reciter_downloads"), tables.toSet())
     }
 
+    @Test
+    fun migrate3To4_createsPrayerTables() {
+        helper.createDatabase(TEST_DB, 3).close()
+        val db = helper.runMigrationsAndValidate(TEST_DB, 4, true, MIGRATION_3_4)
+        val cursor = db.query(
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('prayer_days', 'worship_log', 'azkar_entries')"
+        )
+        val tables = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            tables.add(cursor.getString(0))
+        }
+        cursor.close()
+        db.close()
+        assertEquals(setOf("prayer_days", "worship_log", "azkar_entries"), tables.toSet())
+    }
+
     companion object {
         private const val TEST_DB = "migration-test"
     }

@@ -26,11 +26,13 @@ import com.exapps.nooralhuda.feature.auth.ui.AuthViewModel
 import com.exapps.nooralhuda.feature.azkar.AzkarScreen
 import com.exapps.nooralhuda.feature.hadith.HadithDetailScreen
 import com.exapps.nooralhuda.feature.home.HomeScreen
-import com.exapps.nooralhuda.feature.prayer.PrayerScreen
+import com.exapps.nooralhuda.feature.prayer.ui.PrayerScreen
+import com.exapps.nooralhuda.feature.prayer.ui.QiblaScreen
+import com.exapps.nooralhuda.feature.prayer.ui.TrackerScreen
 import com.exapps.nooralhuda.feature.quran.ui.SurahDetailScreen
 import com.exapps.nooralhuda.feature.quran.ui.QuranScreen
 import com.exapps.nooralhuda.feature.radio.RadioScreen
-import com.exapps.nooralhuda.feature.settings.SettingsScreen
+import com.exapps.nooralhuda.feature.settings.ui.SettingsScreen
 import com.exapps.nooralhuda.core.ui.components.NoorBottomBar
 
 private val TAB_ROUTES = listOf(
@@ -101,7 +103,12 @@ fun NoorAppNav() {
                 )
             }
             composable<Quran> { QuranScreen(onSurahClick = { navController.navigate(SurahDetail(it)) }) }
-            composable<Prayer> { PrayerScreen() }
+            composable<Prayer> {
+                PrayerScreen(
+                    onOpenQibla = { navController.navigate(Qibla) },
+                    onOpenTracker = { navController.navigate(Tracker) }
+                )
+            }
             composable<Azkar> { AzkarScreen() }
             composable<Radio> { RadioScreen() }
             composable<Settings> { SettingsScreen() }
@@ -118,6 +125,8 @@ fun NoorAppNav() {
                     }
                 })
             }
+            composable<Qibla> { QiblaScreen() }
+            composable<Tracker> { TrackerScreen() }
         }
     }
 

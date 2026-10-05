@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.exapps.nooralhuda.core.data.db.MIGRATION_1_2
 import com.exapps.nooralhuda.core.data.db.MIGRATION_2_3
+import com.exapps.nooralhuda.core.data.db.MIGRATION_3_4
 import com.exapps.nooralhuda.core.data.db.NoorDatabase
 import com.exapps.nooralhuda.core.datetime.HijriDateProvider
 import com.exapps.nooralhuda.core.datetime.IslamicHijriDateProvider
@@ -33,7 +34,7 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): NoorDatabase =
         Room.databaseBuilder(context, NoorDatabase::class.java, "noor.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
             .build()
 
     @Provides
@@ -50,6 +51,15 @@ object AppModule {
 
     @Provides
     fun provideReciterDownloadDao(db: NoorDatabase) = db.reciterDownloadDao()
+
+    @Provides
+    fun providePrayerDayDao(db: NoorDatabase) = db.prayerDayDao()
+
+    @Provides
+    fun provideWorshipLogDao(db: NoorDatabase) = db.worshipLogDao()
+
+    @Provides
+    fun provideAzkarDao(db: NoorDatabase) = db.azkarDao()
 
     @Provides
     @IoDispatcher

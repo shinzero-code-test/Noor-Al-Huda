@@ -29,3 +29,9 @@ data class HadithDetail(val hadithId: String)
 
 @Serializable
 data object Auth
+
+@Serializable
+data object Qibla
+
+@Serializable
+data object Tracker

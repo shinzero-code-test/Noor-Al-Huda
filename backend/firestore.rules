@@ -46,6 +46,11 @@ service cloud.firestore {
       match /ai_usage/{day} {
         allow read, write: if isOwner(uid);
       }
+
+      // Push tokens, written by the app itself.
+      match /devices/{token} {
+        allow read, write: if isOwner(uid);
+      }
     }
 
     // ---- legacy bookmarks: migration path only ----
