@@ -56,7 +56,7 @@ class RoomQuranRepository @Inject constructor(
                         )
                     }
                 )
-            } catch (_: Exception) {
+            } catch (ignored: Exception) {
                 // Fall through to cache/asset below.
             }
         }
