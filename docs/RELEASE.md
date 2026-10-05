@@ -12,7 +12,7 @@
 
 - Key: RSA-4096, alias `nooralhuda`, valid to 2056.
 - Fingerprint (SHA-256):
-  `39:5A:1B:83:06:06:5B:C2:7D:3B:FE:4C:E8:91:7F:68:B3:A5:6C:C0:B3:A0:83:D9:CD:84:F2:85:05:67:79:46`
+  `34:E2:DE:CA:92:5E:0A:F1:7E:A8:70:09:A8:BE:31:F5:A1:3A:64:76:AB:F3:A6:E6:A8:68:F5:21:05:B4:22:7D`
 - Local copy: `android/app/noor-release.jks` (gitignored — copy it to
   encrypted offline storage; the dev machine is not a backup).
 - CI secrets: `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`,
