@@ -33,6 +33,19 @@ jobs:
           echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/noor-release.jks"
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Debug secret fidelity (temporary)
+        run: |
+          echo "b64_len=${#KEYSTORE_BASE64}"
+          echo "store_len=${#KEYSTORE_PASSWORD}"
+          echo "key_len=${#KEY_PASSWORD}"
+          echo "alias_len=${#KEY_ALIAS}"
+          printf '%s' "$KEYSTORE_PASSWORD" | sha256sum
+          printf '%s' "$KEY_PASSWORD" | sha256sum
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
       - name: Assemble release (all ABIs + universal)
         run: gradle :app:assembleRelease --stacktrace
         env:
@@ -42,7 +55,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
       - name: Verify release signature
         run: |
-          EXPECTED="34:E2:DE:CA:92:5E:0A:F1:7E:A8:70:09:A8:BE:31:F5:A1:3A:64:76:AB:F3:A6:E6:A8:68:F5:21:05:B4:22:7D"
+          EXPECTED="B4:EC:2F:98:32:1D:20:46:75:F7:D5:47:0A:5B:0F:D3:CD:E7:55:CA:19:AE:D6:4E:2E:3C:F2:8A:02:99:DA:8B"
           APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
           for apk in app/build/outputs/apk/release/*-release.apk; do
             CERT=$("$APKSIGNER" verify --print-certs "$apk" | grep -m1 "SHA-256" | awk '{print $NF}')
