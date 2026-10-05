@@ -67,8 +67,8 @@ fun NoorAppNav() {
             composable<Azkar> { AzkarScreen() }
             composable<Radio> { RadioScreen() }
             composable<Settings> { SettingsScreen() }
-            composable<SurahDetail> { backStackEntry ->
-                SurahDetailScreen(surahId = backStackEntry.toRoute<SurahDetail>().surahId)
+            composable<SurahDetail> {
+                SurahDetailScreen()
             }
             composable<HadithDetail> { backStackEntry ->
                 HadithDetailScreen(hadithId = backStackEntry.toRoute<HadithDetail>().hadithId)

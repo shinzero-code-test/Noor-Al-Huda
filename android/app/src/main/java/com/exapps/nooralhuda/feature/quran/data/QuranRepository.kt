@@ -39,7 +39,7 @@ class RoomQuranRepository @Inject constructor(
         if (privacy.canFetchRemote()) {
             // Any failure (network, auth, upstream) falls through to cache/asset:
             // the list is offline-first; auth-gated features report their own errors.
-            runCatching {
+            try {
                 val body = api.get("/api/quran/chapters")
                 val chapters = json.decodeFromString<ChaptersResponse>(body).chapters
                 val now = System.currentTimeMillis()
