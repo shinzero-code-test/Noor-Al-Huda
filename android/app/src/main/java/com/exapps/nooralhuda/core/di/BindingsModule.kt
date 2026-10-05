@@ -4,6 +4,8 @@ import com.exapps.nooralhuda.core.data.prefs.PendingEmailStore
 import com.exapps.nooralhuda.core.data.prefs.PreferencesStore
 import com.exapps.nooralhuda.core.media.AudioPlayer
 import com.exapps.nooralhuda.core.media.AudioRepository
+import com.exapps.nooralhuda.core.network.BackendApi
+import com.exapps.nooralhuda.core.network.NoorBackendApi
 import com.exapps.nooralhuda.feature.auth.data.FirebaseAuthRepository
 import com.exapps.nooralhuda.feature.auth.domain.AuthRepository
 import com.exapps.nooralhuda.feature.bookmarks.data.BookmarkRepository
@@ -29,6 +31,10 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindPendingEmailStore(impl: PreferencesStore): PendingEmailStore
+
+    @Binds
+    @Singleton
+    abstract fun bindBackendApi(impl: NoorBackendApi): BackendApi
 
     @Binds
     @Singleton
