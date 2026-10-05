@@ -47,4 +47,9 @@
     <string name="reader_tajweed">التجويد</string>
     <string name="reader_play">تشغيل التلاوة</string>
     <string name="reader_audio_label">تلاوة سورة %1$d</string>
+    <string name="home_quick">وصول سريع</string>
+    <string name="auth_gate_title">سجّل الدخول إلى نور الهدى</string>
+    <string name="tajweed_ghunnah">غنة</string>
+    <string name="tajweed_madd">مد</string>
+    <string name="tajweed_qalqalah">قلقلة</string>
 </resources>

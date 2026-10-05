@@ -46,6 +46,10 @@ class PreferencesStore @Inject constructor(@ApplicationContext private val conte
         context.noorDataStore.edit { it[Keys.LAST_READ_SURAH] = surahId.toString() }
     }
 
+    override suspend fun lastReadSurahId(): Int? {
+        return context.noorDataStore.data.map { it[Keys.LAST_READ_SURAH]?.toIntOrNull() }.first()
+    }
+
     suspend fun setLastSync(bucket: String, at: Long) {
         context.noorDataStore.edit { it[longPreferencesKey(lastSyncKey(bucket))] = at }
     }

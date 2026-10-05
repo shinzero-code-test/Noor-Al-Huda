@@ -1,11 +1,13 @@
 package com.exapps.nooralhuda.feature.quran.ui
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -24,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -48,46 +51,82 @@ fun SurahDetailScreen(viewModel: SurahDetailViewModel = hiltViewModel()) {
 
 @Composable
 private fun ReaderContent(state: SurahDetailUiState, viewModel: SurahDetailViewModel) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                FilterChip(
-                    selected = state.showTranslation,
-                    onClick = viewModel::toggleTranslation,
-                    label = { Text(stringResource(R.string.reader_translation)) }
-                )
-                FilterChip(
-                    selected = state.showTajweed,
-                    onClick = viewModel::toggleTajweed,
-                    label = { Text(stringResource(R.string.reader_tajweed)) }
+    androidx.compose.foundation.layout.Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 96.dp)
+        ) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    FilterChip(
+                        selected = state.showTranslation,
+                        onClick = viewModel::toggleTranslation,
+                        label = { Text(stringResource(R.string.reader_translation)) }
+                    )
+                    FilterChip(
+                        selected = state.showTajweed,
+                        onClick = viewModel::toggleTajweed,
+                        label = { Text(stringResource(R.string.reader_tajweed)) }
+                    )
+                }
+            }
+            if (state.showTajweed) {
+                item { TajweedLegend() }
+            }
+            items(state.verses, key = { it.number }) { verse ->
+                VerseRow(
+                    verse = verse,
+                    showTranslation = state.showTranslation,
+                    showTajweed = state.showTajweed,
+                    bookmarked = state.bookmarkedKeys.contains("${verse.surahId}:${verse.number}"),
+                    onBookmark = { viewModel.toggleBookmark(verse) }
                 )
             }
         }
-        items(state.verses, key = { it.number }) { verse ->
-            VerseRow(
-                verse = verse,
-                showTranslation = state.showTranslation,
-                showTajweed = state.showTajweed,
-                bookmarked = state.bookmarkedKeys.contains("${verse.surahId}:${verse.number}"),
-                onBookmark = { viewModel.toggleBookmark(verse) }
-            )
-        }
-        item {
-            val audioLabel = stringResource(R.string.reader_audio_label, state.surahId)
-            AudioBar(
-                label = state.audioLabel,
-                isPlaying = state.isPlaying,
-                downloaded = state.downloaded,
-                onPlay = { viewModel.play(audioLabel) },
-                onToggle = viewModel::togglePlay,
-                onDownload = viewModel::download
-            )
+        val audioLabel = stringResource(R.string.reader_audio_label, state.surahId)
+        AudioBar(
+            label = state.audioLabel,
+            isPlaying = state.isPlaying,
+            downloaded = state.downloaded,
+            onPlay = { viewModel.play(audioLabel) },
+            onToggle = viewModel::togglePlay,
+            onDownload = viewModel::download,
+            modifier = Modifier
+                .align(androidx.compose.ui.Alignment.BottomCenter)
+                .padding(16.dp)
+        )
+    }
+}
+
+@Composable
+private fun TajweedLegend() {
+    val labels = listOf(
+        R.string.tajweed_ghunnah to TajweedParser.legend[0].second,
+        R.string.tajweed_madd to TajweedParser.legend[1].second,
+        R.string.tajweed_qalqalah to TajweedParser.legend[2].second
+    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        labels.forEach { (res, color) ->
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                androidx.compose.foundation.Canvas(modifier = Modifier.size(10.dp)) {
+                    drawCircle(color = color)
+                }
+                Text(
+                    text = stringResource(res),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
@@ -127,11 +166,17 @@ private fun VerseRow(
                     )
                 }
             }
-            Text(text = text, style = QuranVerseStyle, color = colors.onSurface)
+            Text(
+                text = text,
+                style = QuranVerseStyle.copy(textDirection = TextDirection.Rtl),
+                color = colors.onSurface
+            )
             if (showTranslation && verse.translation.isNotBlank()) {
                 Text(
-                    text = verse.translation,
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = TajweedParser.cleanTranslation(verse.translation),
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        textDirection = TextDirection.Ltr
+                    ),
                     color = colors.onSurfaceVariant
                 )
             }
@@ -146,9 +191,10 @@ private fun AudioBar(
     downloaded: Boolean,
     onPlay: () -> Unit,
     onToggle: () -> Unit,
-    onDownload: () -> Unit
+    onDownload: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    NoorCard {
+    NoorCard(modifier = modifier) {
         Row(Modifier.fillMaxWidth().padding(16.dp)) {
             IconButton(onClick = { if (label == null) onPlay() else onToggle() }) {
                 Icon(

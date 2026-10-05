@@ -5,4 +5,5 @@ interface PendingEmailStore {
     suspend fun setPendingEmail(email: String?)
     suspend fun pendingEmail(): String?
     suspend fun setLastReadSurah(surahId: Int)
+    suspend fun lastReadSurahId(): Int?
 }

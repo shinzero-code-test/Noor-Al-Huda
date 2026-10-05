@@ -39,6 +39,15 @@ class TajweedParserTest {
     }
 
     @Test
+    fun `translation footnotes are stripped`() {
+        val raw = "In the name of Allāh.<sup foot_note=254011>1</sup> the Entirely Merciful."
+        assertEquals(
+            "In the name of Allāh.1 the Entirely Merciful.",
+            TajweedParser.cleanTranslation(raw)
+        )
+    }
+
+    @Test
     fun `unknown tajweed class falls back to base color`() {
         val out = TajweedParser.toAnnotatedString(
             "<tajweed class=mystery>x</tajweed>", "", base, marker

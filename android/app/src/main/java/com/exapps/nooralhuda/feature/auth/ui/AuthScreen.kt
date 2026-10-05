@@ -36,6 +36,7 @@ import com.exapps.nooralhuda.core.ui.components.NoorPrimaryButton
 @Composable
 fun AuthScreen(
     onSignedIn: () -> Unit,
+    compact: Boolean = false,
     // Activity scope: shared with MainActivity, which completes email links here.
     viewModel: AuthViewModel = hiltViewModel(LocalContext.current as ComponentActivity)
 ) {
@@ -56,11 +57,13 @@ fun AuthScreen(
             .padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = stringResource(R.string.auth_title),
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        if (!compact) {
+            Text(
+                text = stringResource(R.string.auth_title),
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
         NoorCard {
             Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 OutlinedTextField(

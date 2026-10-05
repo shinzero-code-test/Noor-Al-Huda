@@ -41,6 +41,10 @@ object TajweedParser {
         "Qalqalah" to Color(0xFF6B9BD1)
     )
 
+    /** Translations ship with footnote markup (`<sup foot_note=…>…</sup>`) — strip all tags. */
+    fun cleanTranslation(raw: String): String =
+        raw.replace(Regex("<[^>]+>"), "").replace(Regex("\\s+"), " ").trim()
+
     fun toAnnotatedString(
         tajweed: String?,
         plain: String,

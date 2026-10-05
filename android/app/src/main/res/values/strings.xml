@@ -48,4 +48,9 @@
     <string name="reader_tajweed">Tajweed</string>
     <string name="reader_play">Play recitation</string>
     <string name="reader_audio_label">Surah %1$d recitation</string>
+    <string name="home_quick">Quick access</string>
+    <string name="auth_gate_title">Sign in to Noor Al Huda</string>
+    <string name="tajweed_ghunnah">Ghunnah</string>
+    <string name="tajweed_madd">Madd</string>
+    <string name="tajweed_qalqalah">Qalqalah</string>
 </resources>

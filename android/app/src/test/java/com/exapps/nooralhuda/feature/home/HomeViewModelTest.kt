@@ -5,6 +5,8 @@ import com.exapps.nooralhuda.R
 import com.exapps.nooralhuda.core.datetime.HijriDateProvider
 import com.exapps.nooralhuda.feature.auth.domain.AuthRepository
 import com.exapps.nooralhuda.feature.auth.domain.NoorUser
+import com.exapps.nooralhuda.feature.quran.ui.FakePendingEmailStore
+import com.exapps.nooralhuda.feature.quran.ui.FakeQuranRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.runTest
@@ -45,7 +47,7 @@ class HomeViewModelTest {
 
     @Test
     fun `emits greeting and hijri date`() = runTest {
-        val viewModel = HomeViewModel(fakeDates, FakeAuthRepository())
+        val viewModel = HomeViewModel(fakeDates, FakeAuthRepository(), FakeQuranRepository(), FakePendingEmailStore())
         viewModel.uiState.test {
             val state = awaitItem()
             assertEquals("14 Ramadan 1447", state.hijriDate)
@@ -54,7 +56,7 @@ class HomeViewModelTest {
 
     @Test
     fun `signed out by default`() = runTest {
-        val viewModel = HomeViewModel(fakeDates, FakeAuthRepository())
+        val viewModel = HomeViewModel(fakeDates, FakeAuthRepository(), FakeQuranRepository(), FakePendingEmailStore())
         viewModel.signedIn.test {
             assertEquals(false, awaitItem())
         }
