@@ -6,6 +6,7 @@ import com.exapps.nooralhuda.core.data.prefs.PendingEmailStore
 import com.exapps.nooralhuda.feature.auth.data.AuthException
 import com.exapps.nooralhuda.feature.auth.domain.AuthError
 import com.exapps.nooralhuda.feature.auth.domain.NoorUser
+import com.exapps.nooralhuda.core.navigation.DeepLinkBus
 import com.exapps.nooralhuda.feature.home.FakeAuthRepository
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -36,7 +37,7 @@ class AuthViewModelTest {
     @Test
     fun `invalid credentials map to invalid error string`() = runTest {
         val auth = FakeAuthRepository(nextUserResult = failure(AuthError.InvalidCredentials))
-        val vm = AuthViewModel(auth, FakePendingEmail())
+        val vm = AuthViewModel(auth, FakePendingEmail(), DeepLinkBus())
         vm.signIn("a@b.c", "wrong")
         vm.uiState.test {
             assertEquals(R.string.auth_error_invalid, awaitItem().errorRes)
@@ -46,7 +47,7 @@ class AuthViewModelTest {
     @Test
     fun `guest success publishes user`() = runTest {
         val auth = FakeAuthRepository(nextUserResult = Result.success(user))
-        val vm = AuthViewModel(auth, FakePendingEmail())
+        val vm = AuthViewModel(auth, FakePendingEmail(), DeepLinkBus())
         vm.continueAsGuest()
         vm.uiState.test {
             val state = awaitItem()
@@ -59,7 +60,7 @@ class AuthViewModelTest {
     fun `send link stores pending email`() = runTest {
         val auth = FakeAuthRepository(nextUnitResult = Result.success(Unit))
         val prefs = FakePendingEmail()
-        val vm = AuthViewModel(auth, prefs)
+        val vm = AuthViewModel(auth, prefs, DeepLinkBus())
         vm.sendLink("a@b.c")
         vm.uiState.test {
             assertEquals(R.string.auth_link_sent, awaitItem().infoRes)

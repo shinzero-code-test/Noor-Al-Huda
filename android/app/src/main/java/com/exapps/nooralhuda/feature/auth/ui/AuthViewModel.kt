@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.exapps.nooralhuda.R
 import com.exapps.nooralhuda.core.data.prefs.PendingEmailStore
+import com.exapps.nooralhuda.core.navigation.DeepLinkBus
 import com.exapps.nooralhuda.feature.auth.data.AuthException
 import com.exapps.nooralhuda.feature.auth.domain.AuthError
 import com.exapps.nooralhuda.feature.auth.domain.AuthRepository
@@ -28,7 +29,8 @@ data class AuthUiState(
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val auth: AuthRepository,
-    private val prefs: PendingEmailStore
+    private val prefs: PendingEmailStore,
+    deepLinks: DeepLinkBus
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -44,6 +46,10 @@ class AuthViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(user = user, busy = false)
                 if (user != null) _events.emit(AuthEvent.SignedIn)
             }
+        }
+        // Email links forwarded by MainActivity (dialog-safe: no Activity cast anywhere).
+        viewModelScope.launch {
+            deepLinks.links.collect { link -> consumeEmailLink(link) }
         }
     }
 

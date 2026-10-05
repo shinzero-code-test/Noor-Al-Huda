@@ -1,8 +1,6 @@
 package com.exapps.nooralhuda.feature.auth.ui
 
-import androidx.activity.ComponentActivity
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangementimport androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -37,8 +34,9 @@ import com.exapps.nooralhuda.core.ui.components.NoorPrimaryButton
 fun AuthScreen(
     onSignedIn: () -> Unit,
     compact: Boolean = false,
-    // Activity scope: shared with MainActivity, which completes email links here.
-    viewModel: AuthViewModel = hiltViewModel(LocalContext.current as ComponentActivity)
+    // Nav-entry scope. Email links arrive via DeepLinkBus, so no Activity cast
+    // (a dialog context is not an Activity — that cast crashed on launch).
+    viewModel: AuthViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     var email by rememberSaveable { mutableStateOf("") }

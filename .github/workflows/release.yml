@@ -1,0 +1,66 @@
+name: release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+      - name: Install SDK packages
+        run: |
+          sdkmanager --install "platforms;android-36" "build-tools;36.0.0" "platform-tools"
+          yes | sdkmanager --licenses > /dev/null
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 9.6.0
+      - name: Restore keystore
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/noor-release.jks"
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Assemble release (all ABIs + universal)
+        run: gradle :app:assembleRelease --stacktrace
+        env:
+          KEYSTORE_FILE: ${{ runner.temp }}/noor-release.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      - name: Verify release signature
+        run: |
+          EXPECTED="BC:12:1A:ED:59:EF:78:5D:3C:63:3C:66:8D:49:17:D7:94:55:6B:54:1E:0D:4D:97:3B:8A:93:6B:25:1F:F5:22"
+          APKSIGNER="$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          for apk in app/build/outputs/apk/release/*-release.apk; do
+            CERT=$("$APKSIGNER" verify --print-certs "$apk" | grep -m1 "SHA-256" | awk '{print $NF}')
+            echo "$apk -> $CERT"
+            [ "$CERT" = "$EXPECTED" ] || { echo "SIGNATURE MISMATCH"; exit 1; }
+          done
+      - name: Tag and publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(grep -m1 'versionName = ' app/build.gradle.kts | sed 's/.*"\(.*\)"/\1/')
+          TAG="v$VERSION"
+          echo "Releasing $TAG"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" app/build/outputs/apk/release/*-release.apk --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$TAG" app/build/outputs/apk/release/*-release.apk \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "Noor Al Huda $TAG" \
+              --notes "Signed APKs (per-ABI + universal) for Noor Al Huda $TAG."
+          fi

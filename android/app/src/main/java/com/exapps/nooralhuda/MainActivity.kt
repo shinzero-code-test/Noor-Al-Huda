@@ -10,7 +10,6 @@ import com.exapps.nooralhuda.core.navigation.DeepLinkBus
 import com.exapps.nooralhuda.core.navigation.NoorAppNav
 import com.exapps.nooralhuda.core.ui.theme.NoorAlHudaTheme
 import com.exapps.nooralhuda.core.sync.SyncScheduler
-import com.exapps.nooralhuda.feature.auth.ui.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -19,8 +18,6 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var deepLinkBus: DeepLinkBus
-
-    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +40,8 @@ class MainActivity : ComponentActivity() {
     private fun forwardEmailLink(intent: Intent?) {
         if (intent?.action != Intent.ACTION_VIEW) return
         val link = intent.dataString ?: return
-        // Complete on the activity VM; AuthScreen observes the shared result state.
-        authViewModel.consumeEmailLink(link)
+        // The nav-scoped AuthViewModel consumes this via the bus. No shared
+        // ViewModel instance, no context casts.
         deepLinkBus.emit(link)
     }
 }
