@@ -1,6 +1,7 @@
 package com.exapps.nooralhuda.feature.auth.ui
 
-import androidx.compose.foundation.layout.Arrangementimport androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
