@@ -33,20 +33,6 @@ jobs:
           echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/noor-release.jks"
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-      - name: Debug secret fidelity (temporary)
-        run: |
-          echo "b64_len=${#KEYSTORE_BASE64}"
-          echo "store_len=${#KEYSTORE_PASSWORD}"
-          echo "key_len=${#KEY_PASSWORD}"
-          echo "alias_len=${#KEY_ALIAS}"
-          printf '%s' "$KEYSTORE_PASSWORD" | sha256sum
-          printf '%s' "$KEY_PASSWORD" | sha256sum
-          keytool -list -keystore "$RUNNER_TEMP/noor-release.jks" -storepass "$KEYSTORE_PASSWORD" 2>&1 | head -5
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
       - name: Assemble release (all ABIs + universal)
         run: gradle :app:assembleRelease --stacktrace
         env:
