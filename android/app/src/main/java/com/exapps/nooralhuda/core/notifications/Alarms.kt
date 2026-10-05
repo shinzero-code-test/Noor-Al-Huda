@@ -60,7 +60,10 @@ object PrayerAlarmScheduler {
         if (triggerAt <= System.currentTimeMillis()) return
         val manager = context.getSystemService(AlarmManager::class.java) ?: return
         val operation = AdhanReceiver.pending(context, prayer, label)
-        if (manager.canScheduleExactAlarms()) {
+        // Pre-S exact alarms need no permission; S+ requires SCHEDULE_EXACT_ALARM.
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.S ||
+            manager.canScheduleExactAlarms()
+        ) {
             manager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, operation)
         } else {
             manager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, operation)
