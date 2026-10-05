@@ -2,6 +2,10 @@
 // Credentials stay server-side. Token cached ~3600s, refreshed ~30s early,
 // single in-flight request, retry-once on 401. No refresh_token in this flow.
 
+const QF_HEADERS = {
+  Accept: 'application/json',
+  'User-Agent': 'NoorAlHuda/1.0 (Quran content proxy; contact via Quran Foundation developer console)',
+};
 const ENVS = {
   production: {
     auth: 'https://oauth2.quran.foundation',
@@ -68,7 +72,7 @@ export async function qfGet(
 ): Promise<Response> {
   const doFetch = async (token: string): Promise<Response> =>
     fetch(`${base.api}${path}${query}`, {
-      headers: { 'x-auth-token': token, 'x-client-id': clientId },
+      headers: { ...QF_HEADERS, 'x-auth-token': token, 'x-client-id': clientId },
     });
 
   let token = await qfToken(clientId, clientSecret, base.auth);
