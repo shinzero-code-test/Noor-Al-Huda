@@ -26,7 +26,7 @@ Bump both together; the release tag is `v{versionName}`.
 ## Signing
 
 Release keystore: RSA-4096, alias `nooralhuda`, valid to 2056,
-SHA-256 `ED:67:AD:61:18:36:80:52:85:34:C2:B2:35:0A:5A:BF:B9:BB:E9:5F:6B:98:35:C6:9D:61:3B:1E:76:B3:45:48`.
+SHA-256 `39:5A:1B:83:06:06:5B:C2:7D:3B:FE:4C:E8:91:7F:68:B3:A5:6C:C0:B3:A0:83:D9:CD:84:F2:85:05:67:79:46`.
 Local copy at `app/noor-release.jks` (gitignored). CI restores it from the
 `KEYSTORE_BASE64` secret. Missing keystore fails the release build by design —
 there is no debug-key fallback.
