@@ -1,8 +1,21 @@
 # Admin runbook — nooralhuda-2026 / nooralhuda-admin-api
 
-No dashboard UI exists yet (v2.0 wave). Until then, everything below is done
-with CLIs. Nothing here is committed to git; secrets live in Workers secrets
-and GitHub Actions Secrets only.
+Dashboard: https://nooralhuda-admin-api.shinzero.workers.dev/ (same Worker,
+static SPA, no build step). Adminhood = `admins/{uid}` doc read of your own
+slot (rules owner-read only). Everything below assumes that doc exists.
+
+## First-time bootstrap (two human steps, one time only)
+
+1. **Cloudflare API token** (lets the dashboard rotate provider keys via the
+   secrets API — set once, then never touch CLI secrets again):
+   Cloudflare dashboard → My Profile → API Tokens → Create Token →
+   template **Edit Cloudflare Workers** (or custom: Account / Workers
+   Scripts: Edit) → paste the value to the operator, who runs
+   `wrangler secret put CF_API_TOKEN` from `backend/`.
+2. **Admin doc**: sign in to the dashboard once (it shows your UID even as
+   non-admin), then in the Firebase console create
+   `admins/{YOUR_UID}` with any field (e.g. `createdAt: <now>`);
+   rules deny all client writes, so console is the only path. Refresh.
 
 ## Provider registry (AI)
 
