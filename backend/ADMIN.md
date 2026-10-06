@@ -59,6 +59,14 @@ Spot-checks after deploy (must be `403`/`PERMISSION_DENIED`):
 - Unauthenticated read of any `users/*` document.
 - Authenticated read of another user's `users/{other}/bookmarks/*`.
 - Authenticated read of `content_flags/*` or `halal_reports/*` (console-only).
+- Khatm v2 (19/19 green 2026-10-06, two throwaway users + REST): outsider
+  read of closed group denied; codeless/bad-code join denied; cross-member
+  write, uid tamper, and non-creator remove denied; invite listing denied;
+  self-join (code/open), own progress write, creator remove, and member
+  reads allowed. Rerun battery: sign up A+B, exercise the matrix above,
+  delete docs + users. NOTE: send timestamps WITH fractional seconds
+  (`...T12:00:00.000000000Z`) — without fractions Firestore parses the
+  value as a string and `is timestamp` checks fail closed.
 
 Reports are moderated in the Firebase console. Clients can file, never read.
 

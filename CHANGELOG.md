@@ -18,6 +18,13 @@ Format follows Keep a Changelog; versions are semver with matching `v` tags.
 - Group khatm (B8): v2 rules (invite codes, owned progress, closed groups
   invisible), create/join/progress UI — 19/19 rules spot-checks green
 
+## [1.4.0] — 2026-10-06
+
+Group khatm (B8): v2 Firestore rules (invite-code joins, per-member owned
+progress, closed groups invisible, no shared counters) verified 19/19
+via two-user REST battery; client with live listeners, union progress,
+page claiming, invite sharing, leave/creator-remove.
+
 ## [1.3.0] — 2026-10-06
 
 Ramadan companion (B7): suhoor/iftar times, taraweeh counter, zakat
