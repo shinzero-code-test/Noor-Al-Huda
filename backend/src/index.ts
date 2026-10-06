@@ -4,6 +4,12 @@ import { cors } from 'hono/cors';
 import { verifyFirebaseIdToken, type VerifiedUser } from './auth';
 import { qfBase, qfGet } from './qf';
 import {
+  AdminError,
+  requireAdmin,
+  storeProviderSecrets,
+  validateProvider,
+} from './admin';
+import {
   checkAiBudget,
   checkDailyBudget,
   forwardAiChat,
@@ -20,6 +26,8 @@ export interface Env {
   AI_API_KEY?: string;
   AI_CHAT_MODEL?: string;
   AI_DAILY_LIMIT?: string;
+  CF_ACCOUNT_ID?: string;
+  CF_API_TOKEN?: string;
 }
 
 const app = new Hono<{ Bindings: Env }>();
@@ -157,12 +165,72 @@ app.post('/api/ai/ask', async (c) => {
 });
 
 app.onError((err, c) => {
-  const status =
-    err instanceof Error && 'status' in err && typeof (err as { status: unknown }).status === 'number'
-      ? ((err as { status: number }).status as 401)
-      : 500;
+  const raw =
+    err instanceof AdminError
+      ? err.status
+      : err instanceof Error && 'status' in err && typeof (err as { status: unknown }).status === 'number'
+        ? (err as { status: number }).status
+        : 500;
+  const status = (raw === 500 ? 500 : raw) as 400 | 401 | 403 | 500 | 502 | 503;
   const message = status === 500 ? 'Internal error' : (err as Error).message;
   return c.json({ error: message }, status);
+});
+
+// ---- admin plane (web dashboard) ----
+
+async function requireAdminUser(c: {
+  req: { header(name: string): string | undefined };
+  env: Env;
+}): Promise<VerifiedUser> {
+  const { user, idToken } = await requireUser(c);
+  await requireAdmin(user.uid, idToken, c.env.FIREBASE_PROJECT_ID);
+  return user;
+}
+
+app.get('/api/admin/config', async (c) => {
+  await requireAdminUser(c);
+  return c.json({
+    aiConfigured: Boolean(c.env.AI_BASE_URL && c.env.AI_API_KEY && c.env.AI_CHAT_MODEL),
+    baseUrl: c.env.AI_BASE_URL ?? null,
+    model: c.env.AI_CHAT_MODEL ?? null,
+    dailyLimit: Number(c.env.AI_DAILY_LIMIT ?? '50'),
+  });
+});
+
+app.post('/api/admin/providers', async (c) => {
+  await requireAdminUser(c);
+  let body: unknown;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: 'Invalid JSON body' }, 400);
+  }
+  const input = validateProvider((body ?? {}) as Record<string, unknown>);
+  await storeProviderSecrets(c.env, input);
+  return c.json({ ok: true });
+});
+
+app.post('/api/admin/test', async (c) => {
+  await requireAdminUser(c);
+  let body: unknown;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: 'Invalid JSON body' }, 400);
+  }
+  const prompt = (body as { prompt?: unknown } ?? {}).prompt;
+  if (typeof prompt !== 'string' || prompt.trim().length < 3 || prompt.length > 4000) {
+    return c.json({ error: 'prompt must be 3..4000 characters' }, 400);
+  }
+  try {
+    const answer = await forwardAiChat(c.env, prompt.trim());
+    return c.json({ answer });
+  } catch (err) {
+    if (err instanceof Error && err.message === 'AI_PROVIDER_NOT_CONFIGURED') {
+      return c.json({ error: 'AI provider not configured by admin yet' }, 503);
+    }
+    return c.json({ error: 'AI provider error' }, 502);
+  }
 });
 
 export default app;

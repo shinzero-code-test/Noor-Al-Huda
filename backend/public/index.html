@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Noor Al Huda — Admin</title>
+<style>
+  :root { color-scheme: dark; }
+  body { background: #0d0c0a; color: #ece5d8; font-family: system-ui, sans-serif; margin: 0; padding: 24px; }
+  main { max-width: 720px; margin: 0 auto; }
+  h1 { color: #d4af37; font-size: 22px; }
+  h2 { color: #f3e5ab; font-size: 16px; margin-top: 28px; }
+  .card { background: #141310; border: 1px solid rgba(212,175,55,.15); border-radius: 16px; padding: 16px; margin: 12px 0; }
+  label { display: block; font-size: 13px; color: #a89f91; margin: 10px 0 4px; }
+  input, textarea { width: 100%; box-sizing: border-box; background: #0d0c0a; color: #ece5d8; border: 1px solid rgba(168,159,145,.25); border-radius: 10px; padding: 10px; font-size: 14px; }
+  button { background: linear-gradient(135deg, #e5c158, #d4af37); color: #0d0c0a; border: 0; border-radius: 999px; padding: 10px 22px; font-weight: 700; cursor: pointer; margin-top: 12px; }
+  button.ghost { background: #1c1a16; color: #ece5d8; border: 1px solid rgba(212,175,55,.25); }
+  button:disabled { opacity: .5; cursor: wait; }
+  .muted { color: #a89f91; font-size: 13px; }
+  .ok { color: #7fd08a; } .err { color: #ffb4ab; }
+  .flag { border-top: 1px solid rgba(212,175,55,.12); padding: 10px 0; font-size: 14px; }
+  .flag small { color: #a89f91; display: block; }
+  pre { white-space: pre-wrap; background: #0d0c0a; padding: 12px; border-radius: 10px; font-size: 13px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Noor Al Huda — Admin Dashboard</h1>
+  <p class="muted" id="who">Not signed in.</p>
+  <div id="authBox" class="card">
+    <button id="signin">Sign in with Google</button>
+    <button id="signout" class="ghost" hidden>Sign out</button>
+    <p class="muted">Admins only. Your UID: <code id="uid">—</code></p>
+    <p class="muted" id="adminNote" hidden>If you are not an admin yet, create <code>admins/{uid}</code> in the Firestore console, then refresh.</p>
+  </div>
+
+  <section id="dash" hidden>
+    <h2>AI provider</h2>
+    <div class="card">
+      <p id="cfgLine" class="muted">Loading…</p>
+      <label>Base URL (https origin)</label>
+      <input id="baseUrl" placeholder="https://api.openai.com/v1" autocomplete="off">
+      <label>API key</label>
+      <input id="apiKey" type="password" autocomplete="off">
+      <label>Chat model</label>
+      <input id="model" placeholder="gpt-4o-mini" autocomplete="off">
+      <button id="save">Save provider</button>
+      <span id="saveMsg" class="muted"></span>
+    </div>
+
+    <h2>Test call</h2>
+    <div class="card">
+      <label>Prompt</label>
+      <textarea id="prompt" rows="3">Give a one-line morning dua with source.</textarea>
+      <button id="test">Send test</button>
+      <pre id="answer" hidden></pre>
+    </div>
+
+    <h2>Content reports</h2>
+    <div class="card">
+      <button id="loadFlags" class="ghost">Load reports</button>
+      <div id="flags"></div>
+    </div>
+  </section>
+</main>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

@@ -22,6 +22,14 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
+    // Admin allowlist. admins/{uid} docs are console-bootstrapped (no client
+    // create/update/delete); each user may read only their own doc, which the
+    // backend also uses to prove adminhood for the web dashboard.
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
     function shortStr(v, max) {
       return v is string && v.size() >= 1 && v.size() <= max;
     }
@@ -44,7 +52,8 @@ service cloud.firestore {
 
       // Per-day AI call counters, written by the backend with the caller's token.
       match /ai_usage/{day} {
-        allow read, write: if isOwner(uid);
+        allow read: if isOwner(uid) || isAdmin();
+        allow write: if isOwner(uid);
       }
 
       // Push tokens, written by the app itself.
@@ -207,6 +216,12 @@ service cloud.firestore {
     // NOTE: no khatm_progress collection. Group progress is computed
     // client-side as the union of member completedPages (see above).
 
+    // ---- admin allowlist: console-bootstrapped, owner-read only ----
+    match /admins/{uid} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
     // ---- reports: strict create, invisible to clients ----
     // Moderation happens in the Firebase console. Clients can only file.
 
@@ -217,7 +232,9 @@ service cloud.firestore {
         && shortStr(request.resource.data.contentId, 200)
         && shortStr(request.resource.data.reason, 50)
         && (!('details' in request.resource.data) || request.resource.data.details is string && request.resource.data.details.size() <= 500);
-      allow read, update, delete: if false;
+      // Reports are moderated in the web dashboard (resolve = delete).
+      allow read, delete: if isAdmin();
+      allow update: if false;
     }
 
     match /halal_reports/{barcode} {
