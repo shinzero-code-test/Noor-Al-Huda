@@ -6,12 +6,13 @@ Format follows Keep a Changelog; versions are semver with matching `v` tags.
 ## [Unreleased]
 
 ### Added
-- Hadith library (B1): hadeethenc direct client, Room v5 cache, Paging3 +
-  RemoteMediator, collections + bilingual detail, TTS/copy/share/report,
-  Home quick-action entry; search filters loaded items (legacy parity)
+- Hadith library (B1): hadeethenc direct client, Room v5 cache, Paging3
+  (custom source + Room page cache), collections + bilingual detail,
+  TTS/copy/share/report, Home quick-action entry; search filters loaded
+  items (legacy parity)
 - Radio full player (B3): mp3quran directory, Room v6 cache, Media3 service
-  reuse, now-playing hero, sleep timer, favourites, last-station resume,
-  Home quick-action entry already wired
+  reuse, now-playing hero, sleep timer, favourites, last-station resume
+- Google sign-in (U0): Credential Manager flow, hidden until configured
 - Quran corpus: list, reader with tajweed spans, translation toggle, bookmarks,
   recitation audio (stream + download) via Media3 service
 - Identity: email/password, guest, password reset, passwordless email link
