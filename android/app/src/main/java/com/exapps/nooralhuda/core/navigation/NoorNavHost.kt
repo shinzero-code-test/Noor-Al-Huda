@@ -20,11 +20,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import com.exapps.nooralhuda.feature.auth.ui.AuthScreen
 import com.exapps.nooralhuda.feature.auth.ui.AuthViewModel
 import com.exapps.nooralhuda.feature.azkar.AzkarScreen
-import com.exapps.nooralhuda.feature.hadith.HadithDetailScreen
+import com.exapps.nooralhuda.feature.hadith.ui.HadithDetailScreen
+import com.exapps.nooralhuda.feature.hadith.ui.HadithListScreen
 import com.exapps.nooralhuda.feature.home.HomeScreen
 import com.exapps.nooralhuda.feature.prayer.ui.PrayerScreen
 import com.exapps.nooralhuda.feature.prayer.ui.QiblaScreen
@@ -99,6 +99,7 @@ fun NoorAppNav() {
                     onOpenPrayer = { navController.navigate(Prayer) },
                     onOpenAzkar = { navController.navigate(Azkar) },
                     onOpenRadio = { navController.navigate(Radio) },
+                    onOpenHadith = { navController.navigate(Hadith) },
                     onOpenSurah = { navController.navigate(SurahDetail(it)) }
                 )
             }
@@ -115,8 +116,11 @@ fun NoorAppNav() {
             composable<SurahDetail> {
                 SurahDetailScreen()
             }
-            composable<HadithDetail> { backStackEntry ->
-                HadithDetailScreen(hadithId = backStackEntry.toRoute<HadithDetail>().hadithId)
+            composable<HadithDetail> {
+                HadithDetailScreen()
+            }
+            composable<Hadith> {
+                HadithListScreen(onOpenDetail = { navController.navigate(HadithDetail(it)) })
             }
             composable<Auth> {
                 AuthScreen(onSignedIn = {

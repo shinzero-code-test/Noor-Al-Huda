@@ -19,6 +19,9 @@ data object Azkar
 data object Radio
 
 @Serializable
+data object Hadith
+
+@Serializable
 data object Settings
 
 @Serializable

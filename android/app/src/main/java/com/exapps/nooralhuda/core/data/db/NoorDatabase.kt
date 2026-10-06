@@ -14,10 +14,16 @@ import com.exapps.nooralhuda.feature.quran.data.ReciterDownloadDao
 import com.exapps.nooralhuda.feature.quran.data.ReciterDownloadEntity
 import com.exapps.nooralhuda.feature.quran.data.SurahDao
 import com.exapps.nooralhuda.feature.quran.data.SurahEntity
-import com.exapps.nooralhuda.feature.quran.data.VerseDao
-import com.exapps.nooralhuda.feature.quran.data.VerseEntity
+import com.exapps.nooralhuda.feature.hadith.data.HadithCollectionDao
+import com.exapps.nooralhuda.feature.hadith.data.HadithCollectionEntity
+import com.exapps.nooralhuda.feature.hadith.data.HadithDetailDao
+import com.exapps.nooralhuda.feature.hadith.data.HadithDetailEntity
+import com.exapps.nooralhuda.feature.hadith.data.HadithItemDao
+import com.exapps.nooralhuda.feature.hadith.data.HadithItemEntity
+import com.exapps.nooralhuda.feature.hadith.data.HadithRemoteKeyDao
+import com.exapps.nooralhuda.feature.hadith.data.HadithRemoteKeyEntity
 
-/** v4 adds prayer days, worship log and azkar tables. */
+/** v5 adds the hadith library tables (collections, items, remote keys, details). */
 @Database(
     entities = [
         ContentCacheEntry::class,
@@ -27,9 +33,13 @@ import com.exapps.nooralhuda.feature.quran.data.VerseEntity
         ReciterDownloadEntity::class,
         PrayerDayEntity::class,
         WorshipLogEntity::class,
-        AzkarEntity::class
+        AzkarEntity::class,
+        HadithCollectionEntity::class,
+        HadithItemEntity::class,
+        HadithRemoteKeyEntity::class,
+        HadithDetailEntity::class
     ],
-    version = 4
+    version = 5
 )
 abstract class NoorDatabase : RoomDatabase() {
     abstract fun contentCacheDao(): ContentCacheDao
@@ -40,6 +50,10 @@ abstract class NoorDatabase : RoomDatabase() {
     abstract fun prayerDayDao(): PrayerDayDao
     abstract fun worshipLogDao(): WorshipLogDao
     abstract fun azkarDao(): AzkarDao
+    abstract fun hadithCollectionDao(): HadithCollectionDao
+    abstract fun hadithItemDao(): HadithItemDao
+    abstract fun hadithRemoteKeyDao(): HadithRemoteKeyDao
+    abstract fun hadithDetailDao(): HadithDetailDao
 }
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -90,6 +104,30 @@ val MIGRATION_3_4 = object : Migration(3, 4) {
                 "collection TEXT NOT NULL, entryId TEXT NOT NULL, text TEXT NOT NULL, " +
                 "`count` INTEGER NOT NULL, virtue TEXT NOT NULL, updatedAt INTEGER NOT NULL, " +
                 "PRIMARY KEY(collection, entryId))"
+        )
+    }
+}
+
+val MIGRATION_4_5 = object : Migration(4, 5) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS hadith_collections (" +
+                "id TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, " +
+                "count INTEGER NOT NULL, `group` TEXT NOT NULL)"
+        )
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS hadith_items (" +
+                "collectionId TEXT NOT NULL, id TEXT NOT NULL, title TEXT NOT NULL, " +
+                "sortKey INTEGER NOT NULL, PRIMARY KEY(collectionId, id))"
+        )
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS hadith_remote_keys (" +
+                "collectionId TEXT NOT NULL PRIMARY KEY, nextPage INTEGER)"
+        )
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS hadith_details (" +
+                "id TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, arabic TEXT NOT NULL, " +
+                "english TEXT, source TEXT NOT NULL, updatedAt INTEGER NOT NULL)"
         )
     }
 }

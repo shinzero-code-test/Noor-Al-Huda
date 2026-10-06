@@ -4,11 +4,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Mosque
@@ -38,6 +40,7 @@ fun HomeScreen(
     onOpenPrayer: () -> Unit,
     onOpenAzkar: () -> Unit,
     onOpenRadio: () -> Unit,
+    onOpenHadith: () -> Unit,
     onOpenSurah: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -79,7 +82,8 @@ fun HomeScreen(
             onOpenQuran = onOpenQuran,
             onOpenPrayer = onOpenPrayer,
             onOpenAzkar = onOpenAzkar,
-            onOpenRadio = onOpenRadio
+            onOpenRadio = onOpenRadio,
+            onOpenHadith = onOpenHadith
         )
     }
 }
@@ -127,22 +131,23 @@ private fun QuickGrid(
     onOpenQuran: () -> Unit,
     onOpenPrayer: () -> Unit,
     onOpenAzkar: () -> Unit,
-    onOpenRadio: () -> Unit
+    onOpenRadio: () -> Unit,
+    onOpenHadith: () -> Unit
 ) {
     val actions = listOf(
         Triple(R.string.tab_quran, Icons.Filled.MenuBook, onOpenQuran),
         Triple(R.string.tab_prayer, Icons.Filled.Mosque, onOpenPrayer),
         Triple(R.string.tab_azkar, Icons.Filled.SelfImprovement, onOpenAzkar),
-        Triple(R.string.tab_radio, Icons.Filled.Radio, onOpenRadio)
+        Triple(R.string.tab_radio, Icons.Filled.Radio, onOpenRadio),
+        Triple(R.string.home_hadith, Icons.Filled.AutoStories, onOpenHadith)
     )
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-            QuickTile(actions[0], Modifier.weight(1f))
-            QuickTile(actions[1], Modifier.weight(1f))
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
-            QuickTile(actions[2], Modifier.weight(1f))
-            QuickTile(actions[3], Modifier.weight(1f))
+        actions.chunked(2).forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+                row.forEach { QuickTile(it, Modifier.weight(1f)) }
+                // Keep incomplete rows aligned with the 2-column grid.
+                repeat(2 - row.size) { Spacer(Modifier.weight(1f)) }
+            }
         }
     }
 }

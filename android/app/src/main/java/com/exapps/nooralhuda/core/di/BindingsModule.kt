@@ -12,6 +12,8 @@ import com.exapps.nooralhuda.feature.auth.data.GoogleSignInManager
 import com.exapps.nooralhuda.feature.auth.domain.AuthRepository
 import com.exapps.nooralhuda.feature.bookmarks.data.BookmarkRepository
 import com.exapps.nooralhuda.feature.bookmarks.data.BookmarkRepositoryImpl
+import com.exapps.nooralhuda.feature.hadith.data.RoomHadithRepository
+import com.exapps.nooralhuda.feature.hadith.domain.HadithRepository as HadithRepositoryApi
 import com.exapps.nooralhuda.feature.quran.data.AudioDownloadRepository
 import com.exapps.nooralhuda.feature.quran.data.AudioDownloads
 import com.exapps.nooralhuda.feature.quran.data.RoomQuranRepository
@@ -49,6 +51,10 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindBookmarkRepository(impl: BookmarkRepositoryImpl): BookmarkRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindHadithRepository(impl: RoomHadithRepository): HadithRepositoryApi
 
     @Binds
     @Singleton

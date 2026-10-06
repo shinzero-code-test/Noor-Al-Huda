@@ -64,6 +64,26 @@ class MigrationTest {
         assertEquals(setOf("prayer_days", "worship_log", "azkar_entries"), tables.toSet())
     }
 
+    @Test
+    fun migrate4To5_createsHadithTables() {
+        helper.createDatabase(TEST_DB, 4).close()
+        val db = helper.runMigrationsAndValidate(TEST_DB, 5, true, MIGRATION_4_5)
+        val cursor = db.query(
+            "SELECT name FROM sqlite_master WHERE type = 'table' " +
+                "AND name IN ('hadith_collections', 'hadith_items', 'hadith_remote_keys', 'hadith_details')"
+        )
+        val tables = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            tables.add(cursor.getString(0))
+        }
+        cursor.close()
+        db.close()
+        assertEquals(
+            setOf("hadith_collections", "hadith_items", "hadith_remote_keys", "hadith_details"),
+            tables.toSet()
+        )
+    }
+
     companion object {
         private const val TEST_DB = "migration-test"
     }

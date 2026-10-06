@@ -120,6 +120,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.guava)
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.session)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.compose)
     implementation(libs.okhttp)
     ksp(libs.androidx.room.compiler)
     ksp(libs.hilt.compiler)
