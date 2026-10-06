@@ -15,10 +15,13 @@ Format follows Keep a Changelog; versions are semver with matching `v` tags.
 - Azkar catalog with counter and Arabic TTS; Settings (all prefs + wipe);
   worship log, streaks, tracker UI
 - Auth-gate bottom sheet on launch; gold-circle bottom bar; completed dark theme
-- Ramadan companion (B7): suhoor/iftar times, taraweeh counter, zakat
-  calculator, Hajj summary, occasions list
-- Home completion (B9): verse + hadith of the day, tasbih counter with
-  worship-log totals
+
+## [1.3.0] — 2026-10-06
+
+Ramadan companion (B7): suhoor/iftar times, taraweeh counter, zakat
+calculator, Hajj summary, occasions list. Home completion (B9): verse +
+hadith of the day (legacy rotation, offline fallback), tasbih counter
+with worship-log totals.
 
 ## [1.2.0] — 2026-10-06
 
