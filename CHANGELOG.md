@@ -15,6 +15,8 @@ Format follows Keep a Changelog; versions are semver with matching `v` tags.
 - Azkar catalog with counter and Arabic TTS; Settings (all prefs + wipe);
   worship log, streaks, tracker UI
 - Auth-gate bottom sheet on launch; gold-circle bottom bar; completed dark theme
+- Group khatm (B8): v2 rules (invite codes, owned progress, closed groups
+  invisible), create/join/progress UI — 19/19 rules spot-checks green
 
 ## [1.3.0] — 2026-10-06
 

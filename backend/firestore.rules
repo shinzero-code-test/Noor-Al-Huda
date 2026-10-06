@@ -64,9 +64,29 @@ service cloud.firestore {
         && request.resource.data.userId == request.auth.uid;
     }
 
-    // ---- group khatm: member-only reads, no self-asserted membership ----
-    // Member doc IDs are "<groupId>__<uid>". Group IDs are auto-IDs, which
-    // never contain "__", so the split below is unambiguous.
+    // ---- group khatm v2 (2026-10-06): invite-code joins, owned progress ----
+    //
+    // Model (any deviation breaks the security argument — read all of this
+    // before touching these rules or the Khatm client):
+    // - Groups are EITHER open (discoverable, anyone joins) OR closed
+    //   (invisible; joins only via invite code or creator-add). There is no
+    //   public group listing beyond openJoin == true.
+    // - Member doc IDs are "<groupId>__<uid>". Group IDs are auto-IDs, which
+    //   never contain "__", so the split below is unambiguous. Document IDs
+    //   cannot contain "/" (rejected server-side), so $(groupId) in get()
+    //   paths cannot traverse.
+    // - Invite codes are random 6-12 uppercase alphanumerics. The code IS the
+    //   secret: invite docs are get-by-ID public (no listing), and self-join
+    //   requires presenting a code whose doc points at the group.
+    // - Progress is NEVER a shared counter (the legacy increment-by-anyone
+    //   aggregate was forgeable). Each member owns only their completedPages;
+    //   group progress is computed client-side as the union over member docs.
+    // - completedPages values are validated client-side (rules cannot range-
+    //   check list elements); blast radius is contained because a member can
+    //   only ever write their own doc, capped at 604 entries.
+    // - Deleting a group orphans member/invite docs (no cascade). Orphans are
+    //   inert: joins get() the group and fail, readers only see their own
+    //   slots, and clients skip groups that no longer resolve.
 
     function groupRef(groupId) {
       return /databases/$(database)/documents/khatm_groups/$(groupId);
@@ -77,12 +97,75 @@ service cloud.firestore {
         && exists(/databases/$(database)/documents/khatm_members/$(groupId + '__' + request.auth.uid));
     }
 
+    function khatmGroupCreator(groupId) {
+      return get(groupRef(groupId)).data.created_by;
+    }
+
+    function khatmGroupIsOpen(groupId) {
+      return get(groupRef(groupId)).data.openJoin == true;
+    }
+
+    function validInviteCode(code, groupId) {
+      return code is string && code.matches('^[A-Z0-9]{6,12}$')
+        && exists(/databases/$(database)/documents/khatm_invites/$(code))
+        && get(/databases/$(database)/documents/khatm_invites/$(code)).data.groupId == groupId;
+    }
+
+    function validGroupDoc(data) {
+      return data.keys().hasOnly(['name', 'created_by', 'openJoin', 'createdAt', 'inviteCode'])
+        && shortStr(data.name, 80)
+        && data.created_by is string
+        && data.openJoin is bool
+        && data.createdAt is timestamp
+        && (!('inviteCode' in data) || (data.inviteCode is string && data.inviteCode.matches('^[A-Z0-9]{6,12}$')));
+    }
+
+    function validMemberDoc(data) {
+      return data.keys().hasOnly(['groupId', 'uid', 'displayName', 'completedPages', 'joinedAt', 'inviteCode'])
+        && data.groupId is string && data.groupId.size() >= 1 && data.groupId.size() <= 64
+        && data.uid is string && data.uid.size() >= 1 && data.uid.size() <= 128
+        && (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 60))
+        && (!('completedPages' in data) || (data.completedPages is list && data.completedPages.size() <= 604))
+        && (!('inviteCode' in data) || data.inviteCode is string)
+        && (!('joinedAt' in data) || data.joinedAt is timestamp);
+    }
+
     match /khatm_groups/{groupId} {
-      allow read: if true;
+      // Member reads; outsiders see open groups only. Closed groups are
+      // invisible until you hold a slot (invitees read after creator-add,
+      // or join via code first — join needs no group read).
+      allow get: if isKhatmMember(groupId)
+        || (exists(groupRef(groupId)) && get(groupRef(groupId)).data.openJoin == true);
+      // Discovery queries MUST filter openJoin == true or they are denied.
+      allow list: if isSignedIn() && resource.data.openJoin == true;
       allow create: if isSignedIn()
-        && request.resource.data.created_by == request.auth.uid;
-      allow update, delete: if isSignedIn()
+        && request.resource.data.created_by == request.auth.uid
+        && validGroupDoc(request.resource.data);
+      // Creator only; ownership and creation time are immutable.
+      allow update: if isSignedIn()
+        && resource.data.created_by == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'openJoin'])
+        && shortStr(request.resource.data.name, 80)
+        && request.resource.data.openJoin is bool;
+      allow delete: if isSignedIn()
         && resource.data.created_by == request.auth.uid;
+    }
+
+    match /khatm_invites/{code} {
+      // The code is the secret: exact-ID reads are public, listing is not.
+      // Creators re-read their code from their own group doc (member get),
+      // never by listing this collection.
+      allow get: if true;
+      allow list: if false;
+      allow create: if isSignedIn()
+        && code.matches('^[A-Z0-9]{6,12}$')
+        && request.resource.data.keys().hasOnly(['groupId', 'createdAt'])
+        && request.resource.data.groupId is string
+        && request.resource.data.createdAt is timestamp
+        && khatmGroupCreator(request.resource.data.groupId) == request.auth.uid;
+      allow update: if false;
+      allow delete: if isSignedIn()
+        && khatmGroupCreator(resource.data.groupId) == request.auth.uid;
     }
 
     match /khatm_members/{docId} {
@@ -90,26 +173,39 @@ service cloud.firestore {
         docId.split('__')[1] == request.auth.uid
         || isKhatmMember(docId.split('__')[0])
       );
-      // Join only your own slot, and only into open groups — unless you are
-      // the group creator adding someone.
+      // Self-join into open groups or with a valid code; creators may add
+      // anyone (invites for closed groups). Nobody writes another member's slot.
       allow create: if isSignedIn()
-        && docId == request.resource.data.groupId + '__' + request.auth.uid
-        && request.resource.data.uid == request.auth.uid
+        && docId == request.resource.data.groupId + '__' + request.resource.data.uid
+        && validMemberDoc(request.resource.data)
         && (
-          get(groupRef(request.resource.data.groupId)).data.openJoin == true
-          || get(groupRef(request.resource.data.groupId)).data.created_by == request.auth.uid
+          request.resource.data.uid == request.auth.uid
+          // self-join: open group or valid invite code
+          && (
+            khatmGroupIsOpen(request.resource.data.groupId)
+            || (
+              'inviteCode' in request.resource.data
+              && validInviteCode(request.resource.data.inviteCode, request.resource.data.groupId)
+            )
+          )
+          // creator-add: group creator slots anyone, no code needed
+          || khatmGroupCreator(request.resource.data.groupId) == request.auth.uid
         );
-      // Leave yourself, or be removed by the group creator. No edits.
+      // Own doc only, and only progress/display fields ever change.
+      allow update: if isSignedIn()
+        && docId.split('__')[1] == request.auth.uid
+        && request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly(['displayName', 'completedPages'])
+        && validMemberDoc(request.resource.data);
+      // Leave yourself, or be removed by the group creator. No one else.
       allow delete: if isSignedIn() && (
         docId.split('__')[1] == request.auth.uid
-        || get(groupRef(docId.split('__')[0])).data.created_by == request.auth.uid
+        || khatmGroupCreator(docId.split('__')[0]) == request.auth.uid
       );
-      allow update: if false;
     }
 
-    match /khatm_progress/{groupId} {
-      allow read, write: if isKhatmMember(groupId);
-    }
+    // NOTE: no khatm_progress collection. Group progress is computed
+    // client-side as the union of member completedPages (see above).
 
     // ---- reports: strict create, invisible to clients ----
     // Moderation happens in the Firebase console. Clients can only file.

@@ -40,6 +40,12 @@ data object Knowledge
 data object Ramadan
 
 @Serializable
+data object Khatm
+
+@Serializable
+data class KhatmDetail(val groupId: String, val name: String, val creatorId: String)
+
+@Serializable
 data object Settings
 
 @Serializable

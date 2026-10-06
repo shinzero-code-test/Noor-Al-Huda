@@ -26,6 +26,8 @@ import com.exapps.nooralhuda.feature.seerah.data.RoomSeerahRepository
 import com.exapps.nooralhuda.feature.seerah.domain.SeerahRepository as SeerahRepositoryApi
 import com.exapps.nooralhuda.feature.knowledge.data.RoomKnowledgeRepository
 import com.exapps.nooralhuda.feature.knowledge.domain.KnowledgeRepository as KnowledgeRepositoryApi
+import com.exapps.nooralhuda.feature.khatm.data.FirestoreKhatmRepository
+import com.exapps.nooralhuda.feature.khatm.domain.KhatmRepository as KhatmRepositoryApi
 import com.exapps.nooralhuda.feature.quran.data.AudioDownloadRepository
 import com.exapps.nooralhuda.feature.quran.data.AudioDownloads
 import com.exapps.nooralhuda.feature.quran.data.RoomQuranRepository
@@ -93,6 +95,10 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindKnowledgeRepository(impl: RoomKnowledgeRepository): KnowledgeRepositoryApi
+
+    @Binds
+    @Singleton
+    abstract fun bindKhatmRepository(impl: FirestoreKhatmRepository): KhatmRepositoryApi
 
     @Binds
     @Singleton

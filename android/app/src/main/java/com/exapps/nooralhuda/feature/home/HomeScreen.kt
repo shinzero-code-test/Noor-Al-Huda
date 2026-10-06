@@ -17,6 +17,7 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Mosque
 import androidx.compose.material.icons.filled.NightsStay
@@ -56,6 +57,7 @@ fun HomeScreen(
     onOpenSeerah: () -> Unit,
     onOpenKnowledge: () -> Unit,
     onOpenRamadan: () -> Unit,
+    onOpenKhatm: () -> Unit,
     onOpenSurah: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -117,7 +119,8 @@ fun HomeScreen(
             onOpenCalendar = onOpenCalendar,
             onOpenSeerah = onOpenSeerah,
             onOpenKnowledge = onOpenKnowledge,
-            onOpenRamadan = onOpenRamadan
+            onOpenRamadan = onOpenRamadan,
+            onOpenKhatm = onOpenKhatm
         )
     }
 }
@@ -171,7 +174,8 @@ private fun QuickGrid(
     onOpenCalendar: () -> Unit,
     onOpenSeerah: () -> Unit,
     onOpenKnowledge: () -> Unit,
-    onOpenRamadan: () -> Unit
+    onOpenRamadan: () -> Unit,
+    onOpenKhatm: () -> Unit
 ) {
     val actions = listOf(
         Triple(R.string.tab_quran, Icons.Filled.MenuBook, onOpenQuran),
@@ -183,7 +187,8 @@ private fun QuickGrid(
         Triple(R.string.home_calendar, Icons.Filled.DateRange, onOpenCalendar),
         Triple(R.string.home_seerah, Icons.Filled.History, onOpenSeerah),
         Triple(R.string.home_knowledge, Icons.Filled.School, onOpenKnowledge),
-        Triple(R.string.home_ramadan, Icons.Filled.NightsStay, onOpenRamadan)
+        Triple(R.string.home_ramadan, Icons.Filled.NightsStay, onOpenRamadan),
+        Triple(R.string.home_khatm, Icons.Filled.Groups, onOpenKhatm)
     )
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         actions.chunked(2).forEach { row ->
