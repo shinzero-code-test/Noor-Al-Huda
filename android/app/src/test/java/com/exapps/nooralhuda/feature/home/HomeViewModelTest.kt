@@ -26,7 +26,9 @@ class FakeAuthRepository(
     override suspend fun signInAnonymously() = nextUserResult.also {
         it.onSuccess { state.value = it }
     }
-    override suspend fun signInWithGoogleIdToken(idToken: String) = nextUserResult
+    override suspend fun signInWithGoogleIdToken(idToken: String) = nextUserResult.also {
+        it.onSuccess { state.value = it }
+    }
     override suspend fun sendPasswordReset(email: String) = nextUnitResult
     override suspend fun sendEmailLink(email: String) = nextUnitResult
     override suspend fun completeEmailLink(emailLink: String, email: String) = nextUserResult

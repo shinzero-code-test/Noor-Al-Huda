@@ -6,6 +6,8 @@ import com.exapps.nooralhuda.R
 import com.exapps.nooralhuda.core.data.prefs.PendingEmailStore
 import com.exapps.nooralhuda.core.navigation.DeepLinkBus
 import com.exapps.nooralhuda.feature.auth.data.AuthException
+import com.exapps.nooralhuda.feature.auth.data.GoogleDismissedException
+import com.exapps.nooralhuda.feature.auth.data.GoogleSignIn
 import com.exapps.nooralhuda.feature.auth.domain.AuthError
 import com.exapps.nooralhuda.feature.auth.domain.AuthRepository
 import com.exapps.nooralhuda.feature.auth.domain.NoorUser
@@ -30,6 +32,7 @@ data class AuthUiState(
 class AuthViewModel @Inject constructor(
     private val auth: AuthRepository,
     private val prefs: PendingEmailStore,
+    private val google: GoogleSignIn,
     deepLinks: DeepLinkBus
 ) : ViewModel() {
 
@@ -63,6 +66,26 @@ class AuthViewModel @Inject constructor(
 
     fun continueAsGuest() = runBusy {
         auth.signInAnonymously().mapError().onSuccess { clearError() }
+    }
+
+    /** False until the OAuth web client ID is configured — the button hides. */
+    val googleAvailable: Boolean get() = google.isAvailable
+
+    /** Credential Manager flow. Dismissal is silent; failures map to strings. */
+    fun signInWithGoogle(context: android.content.Context) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(busy = true, errorRes = null, infoRes = null)
+            google.requestIdToken(context)
+                .onSuccess { token ->
+                    auth.signInWithGoogleIdToken(token).mapError().onSuccess { clearError() }
+                }
+                .onFailure { error ->
+                    if (error !is GoogleDismissedException) {
+                        _uiState.value = _uiState.value.copy(errorRes = errorResOf(error))
+                    }
+                }
+            _uiState.value = _uiState.value.copy(busy = false)
+        }
     }
 
     fun sendReset(email: String) = runBusy {
@@ -139,6 +162,7 @@ class AuthViewModel @Inject constructor(
             AuthError.Network -> R.string.auth_error_network
             AuthError.TooManyRequests -> R.string.auth_error_rate_limited
             AuthError.LinkExpired -> R.string.auth_error_link_expired
+            AuthError.GoogleUnavailable -> R.string.auth_error_google_unavailable
             AuthError.RequiresRecentLogin -> R.string.auth_error_recent_login
             is AuthError.Unknown, null -> R.string.auth_error_unknown
         }

@@ -3,7 +3,10 @@ package com.exapps.nooralhuda.feature.auth.ui
 import app.cash.turbine.test
 import com.exapps.nooralhuda.R
 import com.exapps.nooralhuda.core.data.prefs.PendingEmailStore
+import android.content.Context
 import com.exapps.nooralhuda.feature.auth.data.AuthException
+import com.exapps.nooralhuda.feature.auth.data.GoogleDismissedException
+import com.exapps.nooralhuda.feature.auth.data.GoogleSignIn
 import com.exapps.nooralhuda.feature.auth.domain.AuthError
 import com.exapps.nooralhuda.feature.auth.domain.NoorUser
 import com.exapps.nooralhuda.core.navigation.DeepLinkBus
@@ -24,6 +27,14 @@ class FakePendingEmail : PendingEmailStore {
     override suspend fun lastReadSurahId(): Int? = null
 }
 
+class FakeGoogleSignIn(
+    var available: Boolean = true,
+    var tokenResult: Result<String> = Result.success("google-id-token")
+) : GoogleSignIn {
+    override val isAvailable: Boolean get() = available
+    override suspend fun requestIdToken(context: Context): Result<String> = tokenResult
+}
+
 class AuthViewModelTest {
 
     @get:Rule
@@ -37,7 +48,7 @@ class AuthViewModelTest {
     @Test
     fun `invalid credentials map to invalid error string`() = runTest {
         val auth = FakeAuthRepository(nextUserResult = failure(AuthError.InvalidCredentials))
-        val vm = AuthViewModel(auth, FakePendingEmail(), DeepLinkBus())
+        val vm = AuthViewModel(auth, FakePendingEmail(), FakeGoogleSignIn(), DeepLinkBus())
         vm.signIn("a@b.c", "wrong")
         vm.uiState.test {
             assertEquals(R.string.auth_error_invalid, awaitItem().errorRes)
@@ -47,7 +58,7 @@ class AuthViewModelTest {
     @Test
     fun `guest success publishes user`() = runTest {
         val auth = FakeAuthRepository(nextUserResult = Result.success(user))
-        val vm = AuthViewModel(auth, FakePendingEmail(), DeepLinkBus())
+        val vm = AuthViewModel(auth, FakePendingEmail(), FakeGoogleSignIn(), DeepLinkBus())
         vm.continueAsGuest()
         vm.uiState.test {
             val state = awaitItem()
@@ -60,11 +71,63 @@ class AuthViewModelTest {
     fun `send link stores pending email`() = runTest {
         val auth = FakeAuthRepository(nextUnitResult = Result.success(Unit))
         val prefs = FakePendingEmail()
-        val vm = AuthViewModel(auth, prefs, DeepLinkBus())
+        val vm = AuthViewModel(auth, prefs, FakeGoogleSignIn(), DeepLinkBus())
         vm.sendLink("a@b.c")
         vm.uiState.test {
             assertEquals(R.string.auth_link_sent, awaitItem().infoRes)
         }
         assertEquals("a@b.c", prefs.email)
     }
+
+    @Test
+    fun `google success signs in with id token`() = runTest {
+        val auth = FakeAuthRepository(nextUserResult = Result.success(user))
+        val google = FakeGoogleSignIn()
+        val vm = AuthViewModel(auth, FakePendingEmail(), google, DeepLinkBus())
+        assertEquals(true, vm.googleAvailable)
+        vm.signInWithGoogle(mockkContext())
+        vm.uiState.test {
+            assertEquals(user, awaitItem().user)
+        }
+    }
+
+    @Test
+    fun `google dismissal stays silent`() = runTest {
+        val auth = FakeAuthRepository(nextUserResult = Result.success(user))
+        val google = FakeGoogleSignIn(tokenResult = Result.failure(GoogleDismissedException()))
+        val vm = AuthViewModel(auth, FakePendingEmail(), google, DeepLinkBus())
+        vm.signInWithGoogle(mockkContext())
+        vm.uiState.test {
+            val state = awaitItem()
+            assertEquals(null, state.errorRes)
+            assertEquals(null, state.user)
+        }
+    }
+
+    @Test
+    fun `google unavailable maps to error string`() = runTest {
+        val auth = FakeAuthRepository(nextUserResult = Result.success(user))
+        val google = FakeGoogleSignIn(
+            tokenResult = Result.failure(
+                AuthException(AuthError.GoogleUnavailable, IllegalStateException("test"))
+            )
+        )
+        val vm = AuthViewModel(auth, FakePendingEmail(), google, DeepLinkBus())
+        vm.signInWithGoogle(mockkContext())
+        vm.uiState.test {
+            assertEquals(R.string.auth_error_google_unavailable, awaitItem().errorRes)
+        }
+    }
+
+    @Test
+    fun `google hidden when unconfigured`() = runTest {
+        val auth = FakeAuthRepository(nextUserResult = Result.success(user))
+        val vm = AuthViewModel(auth, FakePendingEmail(), FakeGoogleSignIn(available = false), DeepLinkBus())
+        assertEquals(false, vm.googleAvailable)
+    }
+
+    private fun mockkContext(): Context = java.lang.reflect.Proxy.newProxyInstance(
+        javaClass.classLoader,
+        arrayOf(Context::class.java)
+    ) { _, _, _ -> null } as Context
 }

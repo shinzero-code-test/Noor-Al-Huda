@@ -30,6 +30,7 @@
     <string name="auth_guest">Continue as guest</string>
     <string name="auth_send_link">Email me a sign-in link</string>
     <string name="auth_forgot">Forgotten password?</string>
+    <string name="auth_continue_google">Continue with Google</string>
     <string name="auth_reset_sent">Password reset email sent</string>
     <string name="auth_link_sent">Sign-in link sent — open it on this device</string>
     <string name="auth_link_needs_email">Enter the same email address you used for the link</string>
@@ -40,6 +41,7 @@
     <string name="auth_error_network">Network error — check your connection</string>
     <string name="auth_error_rate_limited">Too many attempts — try again later</string>
     <string name="auth_error_link_expired">That link has expired</string>
+    <string name="auth_error_google_unavailable">Google sign-in is unavailable on this device</string>
     <string name="auth_error_recent_login">Please sign in again to continue</string>
     <string name="auth_error_unknown">Something went wrong</string>
     <string name="quran_search">Search surah, verse or section</string>

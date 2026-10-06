@@ -21,6 +21,9 @@ android {
         versionCode = 10000
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // OAuth web client ID (public identifier). Empty until configured —
+        // Google button hides itself. Supplied via env in CI, never committed.
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${System.getenv("GOOGLE_WEB_CLIENT_ID") ?: ""}\"")
     }
 
     splits {

@@ -15,6 +15,7 @@ sealed interface AuthError {
     data object Network : AuthError
     data object TooManyRequests : AuthError
     data object LinkExpired : AuthError
+    data object GoogleUnavailable : AuthError
     data object RequiresRecentLogin : AuthError
     data class Unknown(val message: String?) : AuthError
 }

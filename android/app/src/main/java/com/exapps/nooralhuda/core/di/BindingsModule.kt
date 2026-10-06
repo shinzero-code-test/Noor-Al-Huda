@@ -7,6 +7,8 @@ import com.exapps.nooralhuda.core.media.AudioRepository
 import com.exapps.nooralhuda.core.network.BackendApi
 import com.exapps.nooralhuda.core.network.NoorBackendApi
 import com.exapps.nooralhuda.feature.auth.data.FirebaseAuthRepository
+import com.exapps.nooralhuda.feature.auth.data.GoogleSignIn
+import com.exapps.nooralhuda.feature.auth.data.GoogleSignInManager
 import com.exapps.nooralhuda.feature.auth.domain.AuthRepository
 import com.exapps.nooralhuda.feature.bookmarks.data.BookmarkRepository
 import com.exapps.nooralhuda.feature.bookmarks.data.BookmarkRepositoryImpl
@@ -27,6 +29,10 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindAuthRepository(impl: FirebaseAuthRepository): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindGoogleSignIn(impl: GoogleSignInManager): GoogleSignIn
 
     @Binds
     @Singleton

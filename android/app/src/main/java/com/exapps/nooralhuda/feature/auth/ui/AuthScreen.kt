@@ -7,8 +7,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -19,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -30,7 +37,7 @@ import com.exapps.nooralhuda.core.ui.components.NoorCard
 import com.exapps.nooralhuda.core.ui.components.NoorGhostButton
 import com.exapps.nooralhuda.core.ui.components.NoorPrimaryButton
 
-/** Email/password + guest + reset + passwordless link. Google lands with SHA-1/OAuth config. */
+/** Email/password + guest + Google + reset + passwordless link. */
 @Composable
 fun AuthScreen(
     onSignedIn: () -> Unit,
@@ -124,6 +131,23 @@ fun AuthScreen(
             )
         }
         Spacer(Modifier.height(4.dp))
+        if (viewModel.googleAvailable) {
+            // LocalContext passed through, never cast (dialog-safe by design).
+            val context = LocalContext.current
+            OutlinedButton(
+                onClick = { viewModel.signInWithGoogle(context) },
+                enabled = !state.busy,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.AccountCircle,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(stringResource(R.string.auth_continue_google))
+            }
+        }
         NoorGhostButton(
             onClick = { viewModel.continueAsGuest() },
             label = stringResource(R.string.auth_guest),

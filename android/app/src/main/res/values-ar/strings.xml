@@ -29,6 +29,7 @@
     <string name="auth_guest">المتابعة كضيف</string>
     <string name="auth_send_link">أرسل لي رابط تسجيل الدخول</string>
     <string name="auth_forgot">نسيت كلمة المرور؟</string>
+    <string name="auth_continue_google">المتابعة عبر Google</string>
     <string name="auth_reset_sent">تم إرسال بريد إعادة التعيين</string>
     <string name="auth_link_sent">تم إرسال الرابط — افتحه على هذا الجهاز</string>
     <string name="auth_link_needs_email">أدخل نفس البريد المستخدم للرابط</string>
@@ -39,6 +40,7 @@
     <string name="auth_error_network">خطأ في الشبكة — تحقق من الاتصال</string>
     <string name="auth_error_rate_limited">محاولات كثيرة — حاول لاحقاً</string>
     <string name="auth_error_link_expired">انتهت صلاحية الرابط</string>
+    <string name="auth_error_google_unavailable">تسجيل الدخول عبر Google غير متوفر على هذا الجهاز</string>
     <string name="auth_error_recent_login">سجّل الدخول مجدداً للمتابعة</string>
     <string name="auth_error_unknown">حدث خطأ ما</string>
     <string name="quran_search">ابحث عن سورة أو آية أو جزء</string>

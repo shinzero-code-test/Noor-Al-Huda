@@ -26,6 +26,11 @@ annotation class IoDispatcher
 @Retention(AnnotationRetention.BINARY)
 annotation class DefaultDispatcher
 
+/** OAuth web client ID for Google Sign-In (public client identifier, BuildConfig). */
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class GoogleWebClientId
+
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
@@ -68,6 +73,10 @@ object AppModule {
     @Provides
     @DefaultDispatcher
     fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+
+    @Provides
+    @GoogleWebClientId
+    fun provideGoogleWebClientId(): String = com.exapps.nooralhuda.BuildConfig.GOOGLE_WEB_CLIENT_ID
 
     @Provides
     @Singleton
