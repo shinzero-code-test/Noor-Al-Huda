@@ -11,6 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Public OAuth identifier (BuildConfig). Empty = Google button hides.
+      GOOGLE_WEB_CLIENT_ID: ${{ secrets.GOOGLE_WEB_CLIENT_ID }}
     defaults:
       run:
         working-directory: android
@@ -44,6 +47,8 @@ jobs:
 
   emulator:
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_WEB_CLIENT_ID: ${{ secrets.GOOGLE_WEB_CLIENT_ID }}
     defaults:
       run:
         working-directory: android
