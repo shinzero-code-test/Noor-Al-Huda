@@ -77,8 +77,9 @@ class HadeethencApi @Inject constructor(
             .header("Accept", "application/json")
             .build()
         client.newCall(request).execute().use { response ->
+            val body = response.body?.string().orEmpty()
             if (!response.isSuccessful) throw HadeethencException(response.code)
-            return response.body.string()
+            return body
         }
     }
 }
