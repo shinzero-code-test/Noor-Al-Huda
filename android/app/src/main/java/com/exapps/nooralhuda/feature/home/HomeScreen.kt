@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Bookmark
@@ -17,11 +19,15 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Mosque
+import androidx.compose.material.icons.filled.NightsStay
 import androidx.compose.material.icons.filled.Radio
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.SelfImprovement
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,6 +55,7 @@ fun HomeScreen(
     onOpenCalendar: () -> Unit,
     onOpenSeerah: () -> Unit,
     onOpenKnowledge: () -> Unit,
+    onOpenRamadan: () -> Unit,
     onOpenSurah: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -56,6 +63,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -81,6 +89,19 @@ fun HomeScreen(
         state.resumeSurah?.let { surah ->
             ResumeCard(surah = surah, onClick = { onOpenSurah(surah.id) })
         }
+        state.daily?.let { daily ->
+            DailyCard(
+                daily = daily,
+                onOpenVerse = { onOpenSurah(daily.surahId) }
+            )
+        }
+        TasbihCard(
+            count = state.tasbihCount,
+            today = state.tasbihToday,
+            target = state.tasbihTarget,
+            onTap = viewModel::tasbihTap,
+            onReset = viewModel::tasbihReset
+        )
         Text(
             text = stringResource(R.string.home_quick),
             style = MaterialTheme.typography.titleLarge,
@@ -95,7 +116,8 @@ fun HomeScreen(
             onOpenDua = onOpenDua,
             onOpenCalendar = onOpenCalendar,
             onOpenSeerah = onOpenSeerah,
-            onOpenKnowledge = onOpenKnowledge
+            onOpenKnowledge = onOpenKnowledge,
+            onOpenRamadan = onOpenRamadan
         )
     }
 }
@@ -148,7 +170,8 @@ private fun QuickGrid(
     onOpenDua: () -> Unit,
     onOpenCalendar: () -> Unit,
     onOpenSeerah: () -> Unit,
-    onOpenKnowledge: () -> Unit
+    onOpenKnowledge: () -> Unit,
+    onOpenRamadan: () -> Unit
 ) {
     val actions = listOf(
         Triple(R.string.tab_quran, Icons.Filled.MenuBook, onOpenQuran),
@@ -159,7 +182,8 @@ private fun QuickGrid(
         Triple(R.string.home_dua, Icons.Filled.Favorite, onOpenDua),
         Triple(R.string.home_calendar, Icons.Filled.DateRange, onOpenCalendar),
         Triple(R.string.home_seerah, Icons.Filled.History, onOpenSeerah),
-        Triple(R.string.home_knowledge, Icons.Filled.School, onOpenKnowledge)
+        Triple(R.string.home_knowledge, Icons.Filled.School, onOpenKnowledge),
+        Triple(R.string.home_ramadan, Icons.Filled.NightsStay, onOpenRamadan)
     )
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         actions.chunked(2).forEach { row ->
@@ -198,6 +222,99 @@ private fun QuickTile(
                 color = MaterialTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center
             )
+        }
+    }
+}
+
+@Composable
+private fun DailyCard(
+    daily: com.exapps.nooralhuda.feature.daily.domain.DailyContent,
+    onOpenVerse: () -> Unit
+) {
+    NoorCard {
+        Column(
+            Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.home_verse_day),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = daily.verseArabic,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = "${daily.verseRef} — ${daily.verseTranslation}",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            TextButton(onClick = onOpenVerse) {
+                Text(stringResource(R.string.home_open_verse))
+            }
+            Text(
+                text = stringResource(R.string.home_hadith_day),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = daily.hadithText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = daily.hadithSource,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+private fun TasbihCard(
+    count: Int,
+    today: Int,
+    target: Int,
+    onTap: () -> Unit,
+    onReset: () -> Unit
+) {
+    NoorCard {
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.home_tasbih),
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = "$count / $target",
+                style = MaterialTheme.typography.displaySmall,
+                color = if (count >= target) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = stringResource(R.string.home_tasbih_today, today),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Button(
+                onClick = onTap,
+                modifier = Modifier.size(120.dp),
+                shape = CircleShape
+            ) {
+                Text(stringResource(R.string.home_tasbih_tap))
+            }
+            TextButton(onClick = onReset) {
+                Text(stringResource(R.string.home_tasbih_reset))
+            }
         }
     }
 }

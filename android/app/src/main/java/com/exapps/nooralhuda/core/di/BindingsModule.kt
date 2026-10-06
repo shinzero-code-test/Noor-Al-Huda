@@ -20,6 +20,8 @@ import com.exapps.nooralhuda.feature.dua.data.RoomDuaRepository
 import com.exapps.nooralhuda.feature.dua.domain.DuaRepository as DuaRepositoryApi
 import com.exapps.nooralhuda.feature.calendar.data.RoomCalendarRepository
 import com.exapps.nooralhuda.feature.calendar.domain.CalendarRepository as CalendarRepositoryApi
+import com.exapps.nooralhuda.feature.daily.data.RoomDailyContentRepository
+import com.exapps.nooralhuda.feature.daily.domain.DailyContentRepository as DailyContentRepositoryApi
 import com.exapps.nooralhuda.feature.seerah.data.RoomSeerahRepository
 import com.exapps.nooralhuda.feature.seerah.domain.SeerahRepository as SeerahRepositoryApi
 import com.exapps.nooralhuda.feature.knowledge.data.RoomKnowledgeRepository
@@ -77,6 +79,12 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindCalendarRepository(impl: RoomCalendarRepository): CalendarRepositoryApi
+
+    @Binds
+    @Singleton
+    abstract fun bindDailyContentRepository(
+        impl: RoomDailyContentRepository
+    ): DailyContentRepositoryApi
 
     @Binds
     @Singleton

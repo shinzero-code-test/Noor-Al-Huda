@@ -40,6 +40,20 @@ class FakeAuthRepository(
     }
 }
 
+class FakeDailyContentRepository : com.exapps.nooralhuda.feature.daily.domain.DailyContentRepository {
+    override val content = MutableStateFlow(com.exapps.nooralhuda.feature.daily.domain.FALLBACK_DAILY)
+    override suspend fun refresh() {}
+}
+
+class FakeWorshipLogDao : com.exapps.nooralhuda.feature.prayer.data.WorshipLogDao {
+    private val rows = mutableMapOf<String, com.exapps.nooralhuda.feature.prayer.data.WorshipLogEntity>()
+    override suspend fun forDate(hijri: String) = rows.values.filter { it.hijri == hijri }
+    override suspend fun upsert(entry: com.exapps.nooralhuda.feature.prayer.data.WorshipLogEntity) {
+        rows["${entry.hijri}:${entry.activity}"] = entry
+    }
+    override suspend fun prayerDays(): List<String> = emptyList()
+}
+
 class HomeViewModelTest {
 
     @get:Rule
@@ -49,7 +63,7 @@ class HomeViewModelTest {
 
     @Test
     fun `emits greeting and hijri date`() = runTest {
-        val viewModel = HomeViewModel(fakeDates, FakeAuthRepository(), FakeQuranRepository(), FakePendingEmailStore())
+        val viewModel = HomeViewModel(fakeDates, FakeAuthRepository(), FakeQuranRepository(), FakePendingEmailStore(), FakeDailyContentRepository(), FakeWorshipLogDao(), fakeDates)
         viewModel.uiState.test {
             val state = awaitItem()
             assertEquals("14 Ramadan 1447", state.hijriDate)
@@ -58,7 +72,7 @@ class HomeViewModelTest {
 
     @Test
     fun `signed out by default`() = runTest {
-        val viewModel = HomeViewModel(fakeDates, FakeAuthRepository(), FakeQuranRepository(), FakePendingEmailStore())
+        val viewModel = HomeViewModel(fakeDates, FakeAuthRepository(), FakeQuranRepository(), FakePendingEmailStore(), FakeDailyContentRepository(), FakeWorshipLogDao(), fakeDates)
         viewModel.signedIn.test {
             assertEquals(false, awaitItem())
         }
@@ -77,5 +91,28 @@ class HomeViewModelTest {
     @Test
     fun `night hours greet evening`() {
         assertEquals(R.string.home_greeting_evening, HomeViewModel.greetingFor(22))
+    }
+
+    @Test
+    fun `tasbih tap increments session and today total`() = runTest {
+        val viewModel = HomeViewModel(fakeDates, FakeAuthRepository(), FakeQuranRepository(), FakePendingEmailStore(), FakeDailyContentRepository(), FakeWorshipLogDao(), fakeDates)
+        viewModel.tasbihTap()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertEquals(1, state.tasbihCount)
+            assertEquals(1, state.tasbihToday)
+        }
+    }
+
+    @Test
+    fun `tasbih reset clears session count only`() = runTest {
+        val viewModel = HomeViewModel(fakeDates, FakeAuthRepository(), FakeQuranRepository(), FakePendingEmailStore(), FakeDailyContentRepository(), FakeWorshipLogDao(), fakeDates)
+        viewModel.tasbihTap()
+        viewModel.tasbihReset()
+        viewModel.uiState.test {
+            val state = awaitItem()
+            assertEquals(0, state.tasbihCount)
+            assertEquals(1, state.tasbihToday)
+        }
     }
 }

@@ -28,6 +28,7 @@ import com.exapps.nooralhuda.feature.dua.ui.DuaScreen
 import com.exapps.nooralhuda.feature.hadith.ui.HadithDetailScreen
 import com.exapps.nooralhuda.feature.hadith.ui.HadithListScreen
 import com.exapps.nooralhuda.feature.knowledge.ui.KnowledgeScreen
+import com.exapps.nooralhuda.feature.ramadan.ui.RamadanScreen
 import com.exapps.nooralhuda.feature.seerah.ui.SeerahListScreen
 import com.exapps.nooralhuda.feature.seerah.ui.SeerahReaderScreen
 import com.exapps.nooralhuda.feature.home.HomeScreen
@@ -109,6 +110,7 @@ fun NoorAppNav() {
                     onOpenCalendar = { navController.navigate(Calendar) },
                     onOpenSeerah = { navController.navigate(Seerah) },
                     onOpenKnowledge = { navController.navigate(Knowledge) },
+                    onOpenRamadan = { navController.navigate(Ramadan) },
                     onOpenSurah = { navController.navigate(SurahDetail(it)) }
                 )
             }
@@ -138,6 +140,7 @@ fun NoorAppNav() {
             }
             composable<SeerahReader> { SeerahReaderScreen() }
             composable<Knowledge> { KnowledgeScreen() }
+            composable<Ramadan> { RamadanScreen() }
             composable<Auth> {
                 AuthScreen(onSignedIn = {
                     navController.navigate(Home) {

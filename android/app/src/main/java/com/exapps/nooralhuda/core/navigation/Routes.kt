@@ -37,6 +37,9 @@ data class SeerahReader(val chapterId: String)
 data object Knowledge
 
 @Serializable
+data object Ramadan
+
+@Serializable
 data object Settings
 
 @Serializable
