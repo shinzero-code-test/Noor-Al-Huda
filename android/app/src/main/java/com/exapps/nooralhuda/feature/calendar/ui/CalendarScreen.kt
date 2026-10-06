@@ -90,7 +90,7 @@ fun CalendarScreen(
             item {
                 NoorCard(modifier = Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(12.dp)) {
-                        WeekdayHeader()
+                        WeekdayHeader(state.weekdayNames)
                         val leadBlanks = month.days.firstOrNull()
                             ?.gregorian?.dayOfWeek?.mondayFirstIndex() ?: 0
                         val cells: List<Int?> =
@@ -141,19 +141,15 @@ fun CalendarScreen(
 }
 
 @Composable
-private fun WeekdayHeader() {
-    val locale = java.util.Locale.getDefault()
+private fun WeekdayHeader(names: List<String>) {
     Row(modifier = Modifier.fillMaxWidth()) {
         // Monday-first to match the grid offset math.
-        val ordered = listOf(
-            DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
-            DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY
-        )
-        ordered.forEach { day ->
+        val fridayIndex = 4
+        names.forEachIndexed { index, name ->
             Text(
-                text = day.getDisplayName(TextStyle.SHORT, locale),
+                text = name,
                 style = MaterialTheme.typography.labelMedium,
-                color = if (day == DayOfWeek.FRIDAY) MaterialTheme.colorScheme.primary
+                color = if (index == fridayIndex) MaterialTheme.colorScheme.primary
                 else MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.weight(1f)

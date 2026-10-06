@@ -19,7 +19,9 @@ data class CalendarUiState(
     val offset: Int = 0,
     val events: List<IslamicEvent> = emptyList(),
     val today: LocalDate = LocalDate.now(),
-    val localeAr: Boolean = false
+    val localeAr: Boolean = false,
+    /** Monday-first short weekday names, computed outside composition. */
+    val weekdayNames: List<String> = emptyList()
 )
 
 @HiltViewModel
@@ -34,6 +36,7 @@ class CalendarViewModel @Inject constructor(
     val uiState: StateFlow<CalendarUiState> = _uiState.asStateFlow()
 
     init {
+        _uiState.value = _uiState.value.copy(weekdayNames = weekdayNames())
         viewModelScope.launch {
             repo.warm()
             repo.events.collect { events ->
@@ -62,5 +65,15 @@ class CalendarViewModel @Inject constructor(
         val tag = if (_uiState.value.localeAr) "ar" else "en"
         val name = months.monthName(month.hijriMonth, tag)
         return if (_uiState.value.localeAr) "$name ${month.hijriYear}" else "$name ${month.hijriYear} AH"
+    }
+
+    private fun weekdayNames(): List<String> {
+        val locale = java.util.Locale.getDefault()
+        return listOf(
+            java.time.DayOfWeek.MONDAY, java.time.DayOfWeek.TUESDAY,
+            java.time.DayOfWeek.WEDNESDAY, java.time.DayOfWeek.THURSDAY,
+            java.time.DayOfWeek.FRIDAY, java.time.DayOfWeek.SATURDAY,
+            java.time.DayOfWeek.SUNDAY
+        ).map { it.getDisplayName(java.time.format.TextStyle.SHORT, locale) }
     }
 }
