@@ -45,7 +45,7 @@ class KhatmListViewModel @Inject constructor(
     }
 
     fun onNameChange(name: String) {
-        _uiState.value = _uiState.value.copy(name = name, errorRes = null)
+        _uiState.value = _uiState.value.copy(groupName = name, errorRes = null)
     }
 
     fun onOpenJoinChange(open: Boolean) {
@@ -79,13 +79,13 @@ class KhatmListViewModel @Inject constructor(
         }
     }
 
-    fun joinWithCode(onJoined: (String) -> Unit) {
+    fun joinWithCode(onJoined: (KhatmGroup) -> Unit) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(busy = true, errorRes = null, infoRes = null)
             repo.joinWithCode(_uiState.value.inviteCode)
                 .onSuccess { group ->
                     _uiState.value = _uiState.value.copy(busy = false, inviteCode = "")
-                    onJoined(group.id)
+                    onJoined(group)
                 }
                 .onFailure {
                     _uiState.value = _uiState.value.copy(
