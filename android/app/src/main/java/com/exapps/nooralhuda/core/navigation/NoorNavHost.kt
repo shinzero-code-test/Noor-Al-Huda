@@ -116,11 +116,11 @@ fun NoorAppNav() {
             composable<SurahDetail> {
                 SurahDetailScreen()
             }
-            composable<HadithDetail> {
+            composable<HadithReader> {
                 HadithDetailScreen()
             }
             composable<Hadith> {
-                HadithListScreen(onOpenDetail = { navController.navigate(HadithDetail(it)) })
+                HadithListScreen(onOpenDetail = { navController.navigate(HadithReader(it)) })
             }
             composable<Auth> {
                 AuthScreen(onSignedIn = {

@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.exapps.nooralhuda.R
-import com.exapps.nooralhuda.core.navigation.HadithDetail
+import com.exapps.nooralhuda.core.navigation.HadithReader
 import com.exapps.nooralhuda.core.tts.NoorTts
 import com.exapps.nooralhuda.feature.auth.domain.AuthRepository
 import com.exapps.nooralhuda.feature.hadith.domain.HadithDetail
@@ -37,7 +37,7 @@ class HadithDetailViewModel @Inject constructor(
     auth: AuthRepository
 ) : ViewModel() {
 
-    private val hadithId: String = savedStateHandle.toRoute<HadithDetail>().hadithId
+    private val hadithId: String = savedStateHandle.toRoute<HadithReader>().hadithId
 
     private val _uiState = MutableStateFlow(HadithDetailUiState())
     val uiState: StateFlow<HadithDetailUiState> = _uiState.asStateFlow()

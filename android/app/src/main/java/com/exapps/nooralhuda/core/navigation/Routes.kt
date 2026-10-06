@@ -28,7 +28,7 @@ data object Settings
 data class SurahDetail(val surahId: Int)
 
 @Serializable
-data class HadithDetail(val hadithId: String)
+data class HadithReader(val hadithId: String)
 
 @Serializable
 data object Auth
