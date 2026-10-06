@@ -23,7 +23,7 @@ data class HijriMonth(
     val days: List<HijriDay>
 )
 
-fun interface HijriMonthProvider {
+interface HijriMonthProvider {
     /** Month grid for the current month plus [offset] months. */
     fun month(offset: Int = 0): HijriMonth
 
