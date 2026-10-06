@@ -14,6 +14,8 @@ import com.exapps.nooralhuda.feature.quran.data.ReciterDownloadDao
 import com.exapps.nooralhuda.feature.quran.data.ReciterDownloadEntity
 import com.exapps.nooralhuda.feature.quran.data.SurahDao
 import com.exapps.nooralhuda.feature.quran.data.SurahEntity
+import com.exapps.nooralhuda.feature.quran.data.VerseDao
+import com.exapps.nooralhuda.feature.quran.data.VerseEntity
 import com.exapps.nooralhuda.feature.hadith.data.HadithCollectionDao
 import com.exapps.nooralhuda.feature.hadith.data.HadithCollectionEntity
 import com.exapps.nooralhuda.feature.hadith.data.HadithDetailDao
