@@ -1,0 +1,22 @@
+name: fingerprints
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fingerprints:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore keystore
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/noor-release.jks"
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      - name: Print release certificate fingerprints
+        run: |
+          keytool -list -v -keystore "$RUNNER_TEMP/noor-release.jks" \
+            -storepass "$KEYSTORE_PASSWORD" -alias "$KEY_ALIAS" 2>/dev/null \
+            | grep -E "Alias name|Valid|SHA1|SHA256"
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}

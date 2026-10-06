@@ -22,8 +22,9 @@ Format follows Keep a Changelog; versions are semver with matching `v` tags.
   no Activity casts in composition)
 - Translation footnote markup stripped; tajweed legend; floating reader player
 
-## [1.0.0] — unreleased
+## [1.0.0] — 2026-10-05
 
 Initial native rebuild: v1.0 Core (shell, identity, Quran, prayer, azkar,
 settings, notifications). Clean break from the legacy Expo app (new package
 `com.exapps.nooralhuda`, new Firebase project, no migrated data).
+Signed per-ABI + universal APKs published to GitHub Release `v1.0.0`.
