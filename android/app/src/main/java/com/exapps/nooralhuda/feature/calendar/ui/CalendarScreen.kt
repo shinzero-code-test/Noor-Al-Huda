@@ -142,7 +142,7 @@ fun CalendarScreen(
 
 @Composable
 private fun WeekdayHeader() {
-    val locale = androidx.compose.ui.platform.LocalContext.current.resources.configuration.locales[0]
+    val locale = java.util.Locale.getDefault()
     Row(modifier = Modifier.fillMaxWidth()) {
         // Monday-first to match the grid offset math.
         val ordered = listOf(
