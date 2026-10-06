@@ -18,8 +18,8 @@ android {
         targetSdk = 36
         // Standard versioning: semver versionName; versionCode = M*10000 + m*100 + p.
         // Per-ABI overrides below add the ABI digit for split APKs.
-        versionCode = 10100
-        versionName = "1.1.0"
+        versionCode = 10200
+        versionName = "1.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // OAuth web client ID (public identifier). Empty until configured —
         // Google button hides itself. Supplied via env in CI, never committed.

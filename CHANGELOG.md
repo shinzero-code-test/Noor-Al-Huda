@@ -6,15 +6,6 @@ Format follows Keep a Changelog; versions are semver with matching `v` tags.
 ## [Unreleased]
 
 ### Added
-- Hadith library (B1): hadeethenc direct client, Room v5 cache, Paging3
-  (custom source + Room page cache), collections + bilingual detail,
-  TTS/copy/share/report, Home quick-action entry; search filters loaded
-  items (legacy parity)
-- Radio full player (B3): mp3quran directory, Room v6 cache, Media3 service
-  reuse, now-playing hero, sleep timer, favourites, last-station resume
-- Google sign-in (U0): Credential Manager flow, hidden until configured
-- Offline content pack: dua catalog (B2), Hijri calendar (B4), seerah (B5),
-  knowledge hub (B6) — Room v7, all fully offline
 - Quran corpus: list, reader with tajweed spans, translation toggle, bookmarks,
   recitation audio (stream + download) via Media3 service
 - Identity: email/password, guest, password reset, passwordless email link
@@ -24,6 +15,22 @@ Format follows Keep a Changelog; versions are semver with matching `v` tags.
 - Azkar catalog with counter and Arabic TTS; Settings (all prefs + wipe);
   worship log, streaks, tracker UI
 - Auth-gate bottom sheet on launch; gold-circle bottom bar; completed dark theme
+
+## [1.2.0] — 2026-10-06
+
+Offline content pack (Room v7): dua catalog with counters + locked AI teaser,
+Hijri month grid with occasions + reminders, seerah chapters with TTS/share,
+knowledge hub (names, ruqyah, FAQs, ebooks, streams). Core desugaring enabled.
+
+## [1.1.0] — 2026-10-05
+
+- Hadith library (B1): hadeethenc direct client, Room v5 cache, Paging3
+  (custom source + Room page cache), collections + bilingual detail,
+  TTS/copy/share/report, Home quick-action entry; search filters loaded
+  items (legacy parity)
+- Radio full player (B3): mp3quran directory, Room v6 cache, Media3 service
+  reuse, now-playing hero, sleep timer, favourites, last-station resume
+- Google sign-in (U0): Credential Manager flow, hidden until configured
 
 ### Fixed
 - `Serializer for class 'Home' is not found` (serialization plugin applied)
