@@ -103,6 +103,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.room.paging)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
