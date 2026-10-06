@@ -11,7 +11,7 @@ interface HadithRepository {
     /** Refresh the collections cache (no-op offline; falls back silently). */
     suspend fun refreshCollections(): Result<Unit>
 
-    /** Paged items for one collection, served from Room via RemoteMediator. */
+    /** Paged items for one collection: network pages cached in Room. */
     fun itemsPager(collectionId: String): Flow<PagingData<HadithItem>>
 
     /** Detail: cache first, network when allowed (English optional). */

@@ -1,6 +1,5 @@
 package com.exapps.nooralhuda.feature.hadith.data
 
-import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Entity
 import androidx.room.Insert
@@ -28,13 +27,6 @@ data class HadithItemEntity(
     val sortKey: Int
 )
 
-@Entity(tableName = "hadith_remote_keys")
-data class HadithRemoteKeyEntity(
-    @PrimaryKey val collectionId: String,
-    /** Null = end of collection reached. */
-    val nextPage: Int?
-)
-
 @Entity(tableName = "hadith_details")
 data class HadithDetailEntity(
     @PrimaryKey val id: String,
@@ -59,8 +51,15 @@ interface HadithCollectionDao {
 
 @Dao
 interface HadithItemDao {
-    @Query("SELECT * FROM hadith_items WHERE collectionId = :collectionId ORDER BY sortKey")
-    fun pagingSource(collectionId: String): PagingSource<Int, HadithItemEntity>
+    @Query(
+        "SELECT * FROM hadith_items WHERE collectionId = :collectionId " +
+            "ORDER BY sortKey LIMIT :limit OFFSET :offset"
+    )
+    suspend fun pageByCollection(
+        collectionId: String,
+        limit: Int,
+        offset: Int
+    ): List<HadithItemEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(items: List<HadithItemEntity>)
@@ -70,18 +69,6 @@ interface HadithItemDao {
 
     @Query("SELECT COUNT(*) FROM hadith_items WHERE collectionId = :collectionId")
     suspend fun countByCollection(collectionId: String): Int
-}
-
-@Dao
-interface HadithRemoteKeyDao {
-    @Query("SELECT * FROM hadith_remote_keys WHERE collectionId = :collectionId LIMIT 1")
-    suspend fun get(collectionId: String): HadithRemoteKeyEntity?
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun put(key: HadithRemoteKeyEntity)
-
-    @Query("DELETE FROM hadith_remote_keys WHERE collectionId = :collectionId")
-    suspend fun clear(collectionId: String)
 }
 
 @Dao

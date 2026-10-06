@@ -1,10 +1,8 @@
 package com.exapps.nooralhuda.feature.hadith.data
 
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.map
 import com.exapps.nooralhuda.core.privacy.PrivacyManager
 import com.exapps.nooralhuda.feature.hadith.domain.HadithCollection
 import com.exapps.nooralhuda.feature.hadith.domain.HadithDetail
@@ -29,13 +27,11 @@ import javax.inject.Singleton
  * it; the static catalog seeds collections offline. No network under privacy
  * mode — cached or static data only.
  */
-@OptIn(ExperimentalPagingApi::class)
 @Singleton
 class RoomHadithRepository @Inject constructor(
     private val api: HadeethencApi,
     private val collectionsDao: HadithCollectionDao,
     private val itemsDao: HadithItemDao,
-    private val keysDao: HadithRemoteKeyDao,
     private val detailsDao: HadithDetailDao,
     private val privacy: PrivacyManager,
     private val auth: FirebaseAuth,
@@ -90,16 +86,17 @@ class RoomHadithRepository @Inject constructor(
     override fun itemsPager(collectionId: String): Flow<PagingData<HadithItem>> =
         Pager(
             config = PagingConfig(pageSize = 20, prefetchDistance = 10),
-            remoteMediator = HadithRemoteMediator(
-                collectionId = collectionId,
-                lang = listLang(),
-                api = api,
-                items = itemsDao,
-                keys = keysDao,
-                privacy = privacy
-            ),
-            pagingSourceFactory = { itemsDao.pagingSource(collectionId) }
-        ).flow.map { paging -> paging.map { HadithItem(it.id, it.collectionId, it.title) } }
+            pagingSourceFactory = {
+                HadithPagingSource(
+                    collectionId = collectionId,
+                    lang = listLang(),
+                    perPage = 20,
+                    api = api,
+                    items = itemsDao,
+                    privacy = privacy
+                )
+            }
+        ).flow
 
     override suspend fun detail(id: String): Result<HadithDetail> = runCatching {
         detailsDao.get(id)?.let {

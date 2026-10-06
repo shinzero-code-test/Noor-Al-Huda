@@ -70,7 +70,7 @@ class MigrationTest {
         val db = helper.runMigrationsAndValidate(TEST_DB, 5, true, MIGRATION_4_5)
         val cursor = db.query(
             "SELECT name FROM sqlite_master WHERE type = 'table' " +
-                "AND name IN ('hadith_collections', 'hadith_items', 'hadith_remote_keys', 'hadith_details')"
+                "AND name IN ('hadith_collections', 'hadith_items', 'hadith_details')"
         )
         val tables = mutableListOf<String>()
         while (cursor.moveToNext()) {
@@ -79,7 +79,7 @@ class MigrationTest {
         cursor.close()
         db.close()
         assertEquals(
-            setOf("hadith_collections", "hadith_items", "hadith_remote_keys", "hadith_details"),
+            setOf("hadith_collections", "hadith_items", "hadith_details"),
             tables.toSet()
         )
     }

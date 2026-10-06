@@ -20,10 +20,8 @@ import com.exapps.nooralhuda.feature.hadith.data.HadithDetailDao
 import com.exapps.nooralhuda.feature.hadith.data.HadithDetailEntity
 import com.exapps.nooralhuda.feature.hadith.data.HadithItemDao
 import com.exapps.nooralhuda.feature.hadith.data.HadithItemEntity
-import com.exapps.nooralhuda.feature.hadith.data.HadithRemoteKeyDao
-import com.exapps.nooralhuda.feature.hadith.data.HadithRemoteKeyEntity
 
-/** v5 adds the hadith library tables (collections, items, remote keys, details). */
+/** v5 adds the hadith library tables (collections, items, details). */
 @Database(
     entities = [
         ContentCacheEntry::class,
@@ -36,7 +34,6 @@ import com.exapps.nooralhuda.feature.hadith.data.HadithRemoteKeyEntity
         AzkarEntity::class,
         HadithCollectionEntity::class,
         HadithItemEntity::class,
-        HadithRemoteKeyEntity::class,
         HadithDetailEntity::class
     ],
     version = 5
@@ -52,7 +49,6 @@ abstract class NoorDatabase : RoomDatabase() {
     abstract fun azkarDao(): AzkarDao
     abstract fun hadithCollectionDao(): HadithCollectionDao
     abstract fun hadithItemDao(): HadithItemDao
-    abstract fun hadithRemoteKeyDao(): HadithRemoteKeyDao
     abstract fun hadithDetailDao(): HadithDetailDao
 }
 
@@ -119,10 +115,6 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
             "CREATE TABLE IF NOT EXISTS hadith_items (" +
                 "collectionId TEXT NOT NULL, id TEXT NOT NULL, title TEXT NOT NULL, " +
                 "sortKey INTEGER NOT NULL, PRIMARY KEY(collectionId, id))"
-        )
-        db.execSQL(
-            "CREATE TABLE IF NOT EXISTS hadith_remote_keys (" +
-                "collectionId TEXT NOT NULL PRIMARY KEY, nextPage INTEGER)"
         )
         db.execSQL(
             "CREATE TABLE IF NOT EXISTS hadith_details (" +

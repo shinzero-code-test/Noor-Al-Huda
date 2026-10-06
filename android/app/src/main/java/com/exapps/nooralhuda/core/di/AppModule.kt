@@ -74,9 +74,6 @@ object AppModule {
     fun provideHadithItemDao(db: NoorDatabase) = db.hadithItemDao()
 
     @Provides
-    fun provideHadithRemoteKeyDao(db: NoorDatabase) = db.hadithRemoteKeyDao()
-
-    @Provides
     fun provideHadithDetailDao(db: NoorDatabase) = db.hadithDetailDao()
 
     @Provides
