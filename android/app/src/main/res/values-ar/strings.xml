@@ -15,6 +15,16 @@
     <string name="prayer_title">مواقيت الصلاة</string>
     <string name="azkar_title">الأذكار</string>
     <string name="radio_title">الإذاعة</string>
+    <string name="radio_on_air">بث مباشر</string>
+    <string name="radio_paused">متوقف</string>
+    <string name="radio_connecting">جارٍ الاتصال</string>
+    <string name="radio_toggle">تشغيل أو إيقاف</string>
+    <string name="radio_favourite">مفضلة</string>
+    <string name="radio_share">مشاركة المحطة</string>
+    <string name="radio_sleep_off">المؤقت: متوقف</string>
+    <string name="radio_sleep_minutes">المؤقت: %1$d دقيقة</string>
+    <string name="radio_sleep_remaining">المؤقت: بقي %1$d دقيقة</string>
+    <string name="radio_error_load">تعذّر تحميل المحطات — تحقق من الاتصال</string>
     <string name="settings_title">الإعدادات</string>
     <string name="coming_in_slice">يصل المحتوى الكامل في مرحلة البناء الخاصة به</string>
     <string name="action_retry">إعادة المحاولة</string>

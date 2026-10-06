@@ -14,6 +14,8 @@ import com.exapps.nooralhuda.feature.bookmarks.data.BookmarkRepository
 import com.exapps.nooralhuda.feature.bookmarks.data.BookmarkRepositoryImpl
 import com.exapps.nooralhuda.feature.hadith.data.RoomHadithRepository
 import com.exapps.nooralhuda.feature.hadith.domain.HadithRepository as HadithRepositoryApi
+import com.exapps.nooralhuda.feature.radio.data.RoomRadioRepository
+import com.exapps.nooralhuda.feature.radio.domain.RadioRepository as RadioRepositoryApi
 import com.exapps.nooralhuda.feature.quran.data.AudioDownloadRepository
 import com.exapps.nooralhuda.feature.quran.data.AudioDownloads
 import com.exapps.nooralhuda.feature.quran.data.RoomQuranRepository
@@ -55,6 +57,10 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindHadithRepository(impl: RoomHadithRepository): HadithRepositoryApi
+
+    @Binds
+    @Singleton
+    abstract fun bindRadioRepository(impl: RoomRadioRepository): RadioRepositoryApi
 
     @Binds
     @Singleton

@@ -22,8 +22,10 @@ import com.exapps.nooralhuda.feature.hadith.data.HadithDetailDao
 import com.exapps.nooralhuda.feature.hadith.data.HadithDetailEntity
 import com.exapps.nooralhuda.feature.hadith.data.HadithItemDao
 import com.exapps.nooralhuda.feature.hadith.data.HadithItemEntity
+import com.exapps.nooralhuda.feature.radio.data.RadioStationDao
+import com.exapps.nooralhuda.feature.radio.data.RadioStationEntity
 
-/** v5 adds the hadith library tables (collections, items, details). */
+/** v6 adds the radio station directory. */
 @Database(
     entities = [
         ContentCacheEntry::class,
@@ -36,9 +38,10 @@ import com.exapps.nooralhuda.feature.hadith.data.HadithItemEntity
         AzkarEntity::class,
         HadithCollectionEntity::class,
         HadithItemEntity::class,
-        HadithDetailEntity::class
+        HadithDetailEntity::class,
+        RadioStationEntity::class
     ],
-    version = 5
+    version = 6
 )
 abstract class NoorDatabase : RoomDatabase() {
     abstract fun contentCacheDao(): ContentCacheDao
@@ -52,6 +55,7 @@ abstract class NoorDatabase : RoomDatabase() {
     abstract fun hadithCollectionDao(): HadithCollectionDao
     abstract fun hadithItemDao(): HadithItemDao
     abstract fun hadithDetailDao(): HadithDetailDao
+    abstract fun radioStationDao(): RadioStationDao
 }
 
 val MIGRATION_1_2 = object : Migration(1, 2) {
@@ -122,6 +126,16 @@ val MIGRATION_4_5 = object : Migration(4, 5) {
             "CREATE TABLE IF NOT EXISTS hadith_details (" +
                 "id TEXT NOT NULL PRIMARY KEY, title TEXT NOT NULL, arabic TEXT NOT NULL, " +
                 "english TEXT, source TEXT NOT NULL, updatedAt INTEGER NOT NULL)"
+        )
+    }
+}
+
+val MIGRATION_5_6 = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS radio_stations (" +
+                "id TEXT NOT NULL PRIMARY KEY, name TEXT NOT NULL, " +
+                "url TEXT NOT NULL, favourite INTEGER NOT NULL DEFAULT 0)"
         )
     }
 }

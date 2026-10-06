@@ -16,6 +16,16 @@
     <string name="prayer_title">Prayer</string>
     <string name="azkar_title">Azkar</string>
     <string name="radio_title">Radio</string>
+    <string name="radio_on_air">On air</string>
+    <string name="radio_paused">Paused</string>
+    <string name="radio_connecting">Connecting</string>
+    <string name="radio_toggle">Play or pause</string>
+    <string name="radio_favourite">Favourite</string>
+    <string name="radio_share">Share station</string>
+    <string name="radio_sleep_off">Sleep: off</string>
+    <string name="radio_sleep_minutes">Sleep: %1$d min</string>
+    <string name="radio_sleep_remaining">Sleep timer: %1$d min left</string>
+    <string name="radio_error_load">Could not load stations — check your connection</string>
     <string name="settings_title">Settings</string>
     <string name="coming_in_slice">Full content arrives in its build slice</string>
     <string name="action_retry">Retry</string>

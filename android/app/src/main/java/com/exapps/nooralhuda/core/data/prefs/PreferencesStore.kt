@@ -41,6 +41,7 @@ class PreferencesStore @Inject constructor(@ApplicationContext private val conte
         val NOTIFICATIONS = booleanPreferencesKey("notifications_enabled")
         val HOURLY_DHIKR = booleanPreferencesKey("hourly_dhikr")
         val MORNING_EVENING = booleanPreferencesKey("morning_evening")
+        val LAST_RADIO_ID = stringPreferencesKey("last_radio_id")
     }
 
     fun lastSyncKey(bucket: String) = "sync:last:$bucket"
@@ -85,6 +86,14 @@ class PreferencesStore @Inject constructor(@ApplicationContext private val conte
 
     override suspend fun pendingEmail(): String? {
         return context.noorDataStore.data.map { it[Keys.PENDING_EMAIL_LINK] }.first()
+    }
+
+    suspend fun setLastRadioId(id: String) {
+        context.noorDataStore.edit { it[Keys.LAST_RADIO_ID] = id }
+    }
+
+    suspend fun lastRadioId(): String? {
+        return context.noorDataStore.data.map { it[Keys.LAST_RADIO_ID] }.first()
     }
 
     suspend fun setPrayerLocation(lat: Double, lng: Double, label: String) {

@@ -87,4 +87,20 @@ class MigrationTest {
     companion object {
         private const val TEST_DB = "migration-test"
     }
+
+    @Test
+    fun migrate5To6_createsRadioTable() {
+        helper.createDatabase(TEST_DB, 5).close()
+        val db = helper.runMigrationsAndValidate(TEST_DB, 6, true, MIGRATION_5_6)
+        val cursor = db.query(
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'radio_stations'"
+        )
+        val tables = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            tables.add(cursor.getString(0))
+        }
+        cursor.close()
+        db.close()
+        assertEquals(setOf("radio_stations"), tables.toSet())
+    }
 }

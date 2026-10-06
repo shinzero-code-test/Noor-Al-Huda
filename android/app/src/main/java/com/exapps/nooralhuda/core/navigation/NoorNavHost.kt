@@ -31,7 +31,7 @@ import com.exapps.nooralhuda.feature.prayer.ui.QiblaScreen
 import com.exapps.nooralhuda.feature.prayer.ui.TrackerScreen
 import com.exapps.nooralhuda.feature.quran.ui.SurahDetailScreen
 import com.exapps.nooralhuda.feature.quran.ui.QuranScreen
-import com.exapps.nooralhuda.feature.radio.RadioScreen
+import com.exapps.nooralhuda.feature.radio.ui.RadioScreen
 import com.exapps.nooralhuda.feature.settings.ui.SettingsScreen
 import com.exapps.nooralhuda.core.ui.components.NoorBottomBar
 
