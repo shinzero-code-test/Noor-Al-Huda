@@ -7,9 +7,12 @@ import com.exapps.nooralhuda.core.data.db.MIGRATION_2_3
 import com.exapps.nooralhuda.core.data.db.MIGRATION_3_4
 import com.exapps.nooralhuda.core.data.db.MIGRATION_4_5
 import com.exapps.nooralhuda.core.data.db.MIGRATION_5_6
+import com.exapps.nooralhuda.core.data.db.MIGRATION_6_7
 import com.exapps.nooralhuda.core.data.db.NoorDatabase
 import com.exapps.nooralhuda.core.datetime.HijriDateProvider
+import com.exapps.nooralhuda.core.datetime.HijriMonthProvider
 import com.exapps.nooralhuda.core.datetime.IslamicHijriDateProvider
+import com.exapps.nooralhuda.core.datetime.IslamicHijriMonthProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,7 +44,7 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): NoorDatabase =
         Room.databaseBuilder(context, NoorDatabase::class.java, "noor.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
             .build()
 
     @Provides
@@ -81,6 +84,18 @@ object AppModule {
     fun provideRadioStationDao(db: NoorDatabase) = db.radioStationDao()
 
     @Provides
+    fun provideDuaEntryDao(db: NoorDatabase) = db.duaEntryDao()
+
+    @Provides
+    fun provideCalendarEventDao(db: NoorDatabase) = db.calendarEventDao()
+
+    @Provides
+    fun provideSeerahChapterDao(db: NoorDatabase) = db.seerahChapterDao()
+
+    @Provides
+    fun provideKnowledgeEntryDao(db: NoorDatabase) = db.knowledgeEntryDao()
+
+    @Provides
     @IoDispatcher
     fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
 
@@ -95,4 +110,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideHijriDates(impl: IslamicHijriDateProvider): HijriDateProvider = impl
+
+    @Provides
+    @Singleton
+    fun provideHijriMonths(impl: IslamicHijriMonthProvider): HijriMonthProvider = impl
 }

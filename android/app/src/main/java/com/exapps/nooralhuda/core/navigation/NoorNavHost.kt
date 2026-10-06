@@ -23,8 +23,13 @@ import androidx.navigation.compose.rememberNavController
 import com.exapps.nooralhuda.feature.auth.ui.AuthScreen
 import com.exapps.nooralhuda.feature.auth.ui.AuthViewModel
 import com.exapps.nooralhuda.feature.azkar.AzkarScreen
+import com.exapps.nooralhuda.feature.calendar.ui.CalendarScreen
+import com.exapps.nooralhuda.feature.dua.ui.DuaScreen
 import com.exapps.nooralhuda.feature.hadith.ui.HadithDetailScreen
 import com.exapps.nooralhuda.feature.hadith.ui.HadithListScreen
+import com.exapps.nooralhuda.feature.knowledge.ui.KnowledgeScreen
+import com.exapps.nooralhuda.feature.seerah.ui.SeerahListScreen
+import com.exapps.nooralhuda.feature.seerah.ui.SeerahReaderScreen
 import com.exapps.nooralhuda.feature.home.HomeScreen
 import com.exapps.nooralhuda.feature.prayer.ui.PrayerScreen
 import com.exapps.nooralhuda.feature.prayer.ui.QiblaScreen
@@ -100,6 +105,10 @@ fun NoorAppNav() {
                     onOpenAzkar = { navController.navigate(Azkar) },
                     onOpenRadio = { navController.navigate(Radio) },
                     onOpenHadith = { navController.navigate(Hadith) },
+                    onOpenDua = { navController.navigate(Dua) },
+                    onOpenCalendar = { navController.navigate(Calendar) },
+                    onOpenSeerah = { navController.navigate(Seerah) },
+                    onOpenKnowledge = { navController.navigate(Knowledge) },
                     onOpenSurah = { navController.navigate(SurahDetail(it)) }
                 )
             }
@@ -122,6 +131,13 @@ fun NoorAppNav() {
             composable<Hadith> {
                 HadithListScreen(onOpenDetail = { navController.navigate(HadithReader(it)) })
             }
+            composable<Dua> { DuaScreen() }
+            composable<Calendar> { CalendarScreen() }
+            composable<Seerah> {
+                SeerahListScreen(onOpenChapter = { navController.navigate(SeerahReader(it)) })
+            }
+            composable<SeerahReader> { SeerahReaderScreen() }
+            composable<Knowledge> { KnowledgeScreen() }
             composable<Auth> {
                 AuthScreen(onSignedIn = {
                     navController.navigate(Home) {

@@ -13,6 +13,8 @@ Format follows Keep a Changelog; versions are semver with matching `v` tags.
 - Radio full player (B3): mp3quran directory, Room v6 cache, Media3 service
   reuse, now-playing hero, sleep timer, favourites, last-station resume
 - Google sign-in (U0): Credential Manager flow, hidden until configured
+- Offline content pack: dua catalog (B2), Hijri calendar (B4), seerah (B5),
+  knowledge hub (B6) — Room v7, all fully offline
 - Quran corpus: list, reader with tajweed spans, translation toggle, bookmarks,
   recitation audio (stream + download) via Media3 service
 - Identity: email/password, guest, password reset, passwordless email link

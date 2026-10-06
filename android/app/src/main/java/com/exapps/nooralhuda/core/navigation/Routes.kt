@@ -22,6 +22,21 @@ data object Radio
 data object Hadith
 
 @Serializable
+data object Dua
+
+@Serializable
+data object Calendar
+
+@Serializable
+data object Seerah
+
+@Serializable
+data class SeerahReader(val chapterId: String)
+
+@Serializable
+data object Knowledge
+
+@Serializable
 data object Settings
 
 @Serializable

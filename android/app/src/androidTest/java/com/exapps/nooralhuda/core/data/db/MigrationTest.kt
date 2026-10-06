@@ -103,4 +103,24 @@ class MigrationTest {
         db.close()
         assertEquals(setOf("radio_stations"), tables.toSet())
     }
+
+    @Test
+    fun migrate6To7_createsContentPackTables() {
+        helper.createDatabase(TEST_DB, 6).close()
+        val db = helper.runMigrationsAndValidate(TEST_DB, 7, true, MIGRATION_6_7)
+        val cursor = db.query(
+            "SELECT name FROM sqlite_master WHERE type = 'table' " +
+                "AND name IN ('dua_entries', 'calendar_events', 'seerah_chapters', 'knowledge_entries')"
+        )
+        val tables = mutableListOf<String>()
+        while (cursor.moveToNext()) {
+            tables.add(cursor.getString(0))
+        }
+        cursor.close()
+        db.close()
+        assertEquals(
+            setOf("dua_entries", "calendar_events", "seerah_chapters", "knowledge_entries"),
+            tables.toSet()
+        )
+    }
 }

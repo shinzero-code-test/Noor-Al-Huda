@@ -16,6 +16,14 @@ import com.exapps.nooralhuda.feature.hadith.data.RoomHadithRepository
 import com.exapps.nooralhuda.feature.hadith.domain.HadithRepository as HadithRepositoryApi
 import com.exapps.nooralhuda.feature.radio.data.RoomRadioRepository
 import com.exapps.nooralhuda.feature.radio.domain.RadioRepository as RadioRepositoryApi
+import com.exapps.nooralhuda.feature.dua.data.RoomDuaRepository
+import com.exapps.nooralhuda.feature.dua.domain.DuaRepository as DuaRepositoryApi
+import com.exapps.nooralhuda.feature.calendar.data.RoomCalendarRepository
+import com.exapps.nooralhuda.feature.calendar.domain.CalendarRepository as CalendarRepositoryApi
+import com.exapps.nooralhuda.feature.seerah.data.RoomSeerahRepository
+import com.exapps.nooralhuda.feature.seerah.domain.SeerahRepository as SeerahRepositoryApi
+import com.exapps.nooralhuda.feature.knowledge.data.RoomKnowledgeRepository
+import com.exapps.nooralhuda.feature.knowledge.domain.KnowledgeRepository as KnowledgeRepositoryApi
 import com.exapps.nooralhuda.feature.quran.data.AudioDownloadRepository
 import com.exapps.nooralhuda.feature.quran.data.AudioDownloads
 import com.exapps.nooralhuda.feature.quran.data.RoomQuranRepository
@@ -61,6 +69,22 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindRadioRepository(impl: RoomRadioRepository): RadioRepositoryApi
+
+    @Binds
+    @Singleton
+    abstract fun bindDuaRepository(impl: RoomDuaRepository): DuaRepositoryApi
+
+    @Binds
+    @Singleton
+    abstract fun bindCalendarRepository(impl: RoomCalendarRepository): CalendarRepositoryApi
+
+    @Binds
+    @Singleton
+    abstract fun bindSeerahRepository(impl: RoomSeerahRepository): SeerahRepositoryApi
+
+    @Binds
+    @Singleton
+    abstract fun bindKnowledgeRepository(impl: RoomKnowledgeRepository): KnowledgeRepositoryApi
 
     @Binds
     @Singleton

@@ -12,9 +12,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Mosque
 import androidx.compose.material.icons.filled.Radio
+import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.SelfImprovement
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,6 +45,10 @@ fun HomeScreen(
     onOpenAzkar: () -> Unit,
     onOpenRadio: () -> Unit,
     onOpenHadith: () -> Unit,
+    onOpenDua: () -> Unit,
+    onOpenCalendar: () -> Unit,
+    onOpenSeerah: () -> Unit,
+    onOpenKnowledge: () -> Unit,
     onOpenSurah: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
@@ -83,7 +91,11 @@ fun HomeScreen(
             onOpenPrayer = onOpenPrayer,
             onOpenAzkar = onOpenAzkar,
             onOpenRadio = onOpenRadio,
-            onOpenHadith = onOpenHadith
+            onOpenHadith = onOpenHadith,
+            onOpenDua = onOpenDua,
+            onOpenCalendar = onOpenCalendar,
+            onOpenSeerah = onOpenSeerah,
+            onOpenKnowledge = onOpenKnowledge
         )
     }
 }
@@ -132,14 +144,22 @@ private fun QuickGrid(
     onOpenPrayer: () -> Unit,
     onOpenAzkar: () -> Unit,
     onOpenRadio: () -> Unit,
-    onOpenHadith: () -> Unit
+    onOpenHadith: () -> Unit,
+    onOpenDua: () -> Unit,
+    onOpenCalendar: () -> Unit,
+    onOpenSeerah: () -> Unit,
+    onOpenKnowledge: () -> Unit
 ) {
     val actions = listOf(
         Triple(R.string.tab_quran, Icons.Filled.MenuBook, onOpenQuran),
         Triple(R.string.tab_prayer, Icons.Filled.Mosque, onOpenPrayer),
         Triple(R.string.tab_azkar, Icons.Filled.SelfImprovement, onOpenAzkar),
         Triple(R.string.tab_radio, Icons.Filled.Radio, onOpenRadio),
-        Triple(R.string.home_hadith, Icons.Filled.AutoStories, onOpenHadith)
+        Triple(R.string.home_hadith, Icons.Filled.AutoStories, onOpenHadith),
+        Triple(R.string.home_dua, Icons.Filled.Favorite, onOpenDua),
+        Triple(R.string.home_calendar, Icons.Filled.DateRange, onOpenCalendar),
+        Triple(R.string.home_seerah, Icons.Filled.History, onOpenSeerah),
+        Triple(R.string.home_knowledge, Icons.Filled.School, onOpenKnowledge)
     )
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         actions.chunked(2).forEach { row ->
