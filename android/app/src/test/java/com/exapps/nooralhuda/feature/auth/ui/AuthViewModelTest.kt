@@ -126,8 +126,6 @@ class AuthViewModelTest {
         assertEquals(false, vm.googleAvailable)
     }
 
-    private fun mockkContext(): Context = java.lang.reflect.Proxy.newProxyInstance(
-        javaClass.classLoader,
-        arrayOf(Context::class.java)
-    ) { _, _, _ -> null } as Context
+    // ContextWrapper(null) never touches android.jar stubs — the fake ignores it.
+    private fun mockkContext(): Context = android.content.ContextWrapper(null)
 }
